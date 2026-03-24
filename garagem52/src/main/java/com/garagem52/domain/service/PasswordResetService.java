@@ -23,7 +23,7 @@ public class PasswordResetService implements PasswordResetInputPort {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void solicitarRecuperação(String email) {
+    public void solicitarRecuperacao(String email) {
         User user = userOutputPort.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 

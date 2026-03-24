@@ -18,7 +18,7 @@ public class PasswordResetController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<MessageResponse> forgotPassword(@RequestParam String email) {
-        passwordResetInputPort.solicitarRecuperação(email);
+        passwordResetInputPort.solicitarRecuperacao(email);
         return ResponseEntity.ok(new MessageResponse("Se este e-mail estiver cadastrado, você receberá as instruções."));
     }
 
