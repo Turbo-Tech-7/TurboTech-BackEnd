@@ -1,4 +1,5 @@
-package com.garagem52.domain.service;
+    package com.garagem52.domain.service;
+
 
 import com.garagem52.adapter.input.dto.response.PecaResponseDTO;
 import com.garagem52.adapter.output.persistence.mapper.PecaPersistenceMapper;
@@ -8,14 +9,14 @@ import com.garagem52.ports.input.PecaInputPort;
 import com.garagem52.ports.output.PecaOutputPort;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-import java.util.stream.Collectors;
+    import java.util.List;
+    import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class PecaService implements PecaInputPort {
 
-    private final PecaOutputPort pecaOutputPort;
-    private final PecaPersistenceMapper mapper;
+        private final PecaOutputPort pecaOutputPort;
+        private final PecaPersistenceMapper mapper;
 
     @Override
     public List<PecaResponseDTO> findByNome(String nomePeca) {

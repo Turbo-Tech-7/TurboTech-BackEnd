@@ -4,11 +4,35 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc3e6d6f-3044-49ae-967e-ae7fb7db5429" name="Changes" comment="fix: modificação do aplication.properties" />
+    <list default="true" id="dc3e6d6f-3044-49ae-967e-ae7fb7db5429" name="Changes" comment="fix: modificação do aplication.properties">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/adapter/input/controller/FornecedorController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/adapter/input/dto/request/FornecedorRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/adapter/input/dto/response/FornecedorResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/adapter/output/persistence/database/FornecedorRepositoryAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/adapter/output/persistence/entity/FornecedorEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/adapter/output/persistence/mapper/FornecedorPersistenceMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/adapter/output/persistence/repository/JpaFornecedorRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/domain/exception/fornecedor/FornecedorNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/domain/model/Fornecedor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/domain/service/FornecedorService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/ports/input/FornecedorInputPort.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/ports/output/FornecedorOutputPort.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/garagem52/domain/service/PecaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/garagem52/domain/service/PecaService.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Exception" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -24,12 +48,17 @@
     &quot;assignee&quot;: &quot;Jv-Torelli&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:Turbo-Tech-7/TurboTech-BackEnd.git",
-    "accountId": "482ef562-b5a0-401b-b4a5-b72e5d958de5"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:Turbo-Tech-7/TurboTech-BackEnd.git&quot;,
+    &quot;accountId&quot;: &quot;482ef562-b5a0-401b-b4a5-b72e5d958de5&quot;
   }
-}]]></component>
+}</component>
+  <component name="ProblemsViewState">
+    <hideBySeverity>
+      <option value="300" />
+    </hideBySeverity>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -46,9 +75,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "<unknown>",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/jota/Public/projeto_turboTech/TurboTech-BackEnd/garagem52",
+    "last_opened_file_path": "C:/Users/João Victor/Documents/Faculdade/PI/TurboTech-BackEnd/garagem52",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
@@ -58,7 +87,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
       </set>
     </attachedChunks>
   </component>
@@ -92,7 +121,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/garagem52/domain/service/PasswordResetService.java</url>
           <line>25</line>
-          <properties class="com.garagem52.domain.service.PasswordResetService" method="solicitarRecuperação">
+          <properties class="com.garagem52.domain.service.PasswordResetService">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
