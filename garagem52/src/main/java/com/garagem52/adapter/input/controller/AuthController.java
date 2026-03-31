@@ -1,5 +1,6 @@
 package com.garagem52.adapter.input.controller;
 
+import com.garagem52.adapter.input.doc.AuthControllerSwagger;
 import com.garagem52.adapter.input.dto.request.CreateUserRequestDTO;
 import com.garagem52.adapter.input.dto.request.LoginRequestDTO;
 import com.garagem52.adapter.input.dto.response.LoginResponseDTO;
@@ -26,10 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthControllerSwagger {
 
     private final UserInputPort userInputPort;
 
+    @Override
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> cadastro(@Valid @RequestBody CreateUserRequestDTO request) {
         UserResponseDTO response = userInputPort.cadastro(request);
@@ -37,6 +39,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Override
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         return ResponseEntity.ok(userInputPort.login(request));

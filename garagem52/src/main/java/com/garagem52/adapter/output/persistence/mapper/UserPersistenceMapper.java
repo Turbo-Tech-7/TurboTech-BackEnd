@@ -1,6 +1,5 @@
 package com.garagem52.adapter.output.persistence.mapper;
 
-import com.garagem52.adapter.input.dto.response.UserResponseDTO;
 import com.garagem52.adapter.output.persistence.entity.UserEntity;
 import com.garagem52.domain.model.User;
 import org.mapstruct.Mapper;

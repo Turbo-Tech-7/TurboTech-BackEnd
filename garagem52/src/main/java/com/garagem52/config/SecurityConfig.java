@@ -14,14 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/**
- * CONFIG — SECURITY CONFIG (apenas @Bean do Spring)
- * Registra os beans de segurança: SecurityFilterChain e PasswordEncoder.
- * O filtro de autenticação (JwtAuthFilter) vem do domain/security — aqui
- * apenas o conectamos à cadeia de filtros do Spring Security.
- * SessionCreationPolicy.STATELESS:
- *   Sem sessão HTTP no servidor — cada requisição se autentica via token JWT.
- */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,14 +21,28 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
+    private static final String[] SWAGGER_WHITELIST = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(SWAGGER_WHITELIST).permitAll()
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/password-reset/**").permitAll()
+                .requestMatchers("/orcamentos/{id}/pdf").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                .requestMatchers("/veiculos/**").authenticated()
+                .requestMatchers("/pecas/**").authenticated()
+                .requestMatchers("/fornecedores/**").authenticated()
+                .requestMatchers("/servicos/**").authenticated()
+                .requestMatchers("/orcamentos/**").authenticated()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -44,10 +50,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * BCryptPasswordEncoder — hash com salt aleatório embutido.
-     * Impossível reverter — padrão da indústria para senhas.
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

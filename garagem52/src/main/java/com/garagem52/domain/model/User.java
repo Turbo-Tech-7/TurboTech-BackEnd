@@ -1,6 +1,7 @@
 package com.garagem52.domain.model;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * HEXAGONAL — DOMAIN MODEL

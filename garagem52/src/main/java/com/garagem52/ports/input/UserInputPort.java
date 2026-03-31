@@ -2,8 +2,8 @@ package com.garagem52.ports.input;
 
 import com.garagem52.adapter.input.dto.request.CreateUserRequestDTO;
 import com.garagem52.adapter.input.dto.request.LoginRequestDTO;
-import com.garagem52.adapter.input.dto.response.LoginResponseDTO;
 import com.garagem52.adapter.input.dto.request.UpdateUserRequestDTO;
+import com.garagem52.adapter.input.dto.response.LoginResponseDTO;
 import com.garagem52.adapter.input.dto.response.UserResponseDTO;
 
 import java.util.List;
