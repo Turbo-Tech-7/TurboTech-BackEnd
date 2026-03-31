@@ -97,6 +97,11 @@ CREATE TABLE IF NOT EXISTS orcamento (
     valor_mao_de_obra DECIMAL(10,2),
     valor_total DECIMAL(10,2),
     data_orcamento DATETIME,
+    status VARCHAR(20) NOT NULL DEFAULT 'ABERTO',
+    motivo_cancelamento VARCHAR(30),
+    nome_cliente VARCHAR(255),
+    telefone_cliente VARCHAR(255),
+    descricao_servico VARCHAR(255),
 
     PRIMARY KEY (id),
 
@@ -118,6 +123,7 @@ CREATE TABLE IF NOT EXISTS item_orcado (
     peca_id BIGINT NOT NULL,
     valor DECIMAL(10,2),
     quantidade INT,
+    fornecedor VARCHAR(255),
 
     PRIMARY KEY (id),
 
@@ -153,3 +159,17 @@ CREATE TABLE IF NOT EXISTS password_reset_token (
 -- CREATE USER IF NOT EXISTS 'garagem52_app'@'localhost' IDENTIFIED BY 'senha_segura';
 -- GRANT SELECT, INSERT, UPDATE, DELETE ON garagem52_db.* TO 'garagem52_app'@'localhost';
 -- FLUSH PRIVILEGES;
+
+-- =============================================
+-- MIGRATION: adiciona colunas que faltavam
+-- Execute se o banco já existia antes desta versão
+-- =============================================
+ALTER TABLE orcamento
+    ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'ABERTO',
+    ADD COLUMN IF NOT EXISTS motivo_cancelamento VARCHAR(30),
+    ADD COLUMN IF NOT EXISTS nome_cliente VARCHAR(255),
+    ADD COLUMN IF NOT EXISTS telefone_cliente VARCHAR(255),
+    ADD COLUMN IF NOT EXISTS descricao_servico VARCHAR(255);
+
+ALTER TABLE item_orcado
+    ADD COLUMN IF NOT EXISTS fornecedor VARCHAR(255);

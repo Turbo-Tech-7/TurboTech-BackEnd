@@ -1,7 +1,7 @@
 package com.garagem52.adapter.output.persistence.database;
 
-import com.garagem52.adapter.output.persistence.repository.JpaUserRepository;
 import com.garagem52.adapter.output.persistence.mapper.UserPersistenceMapper;
+import com.garagem52.adapter.output.persistence.repository.JpaUserRepository;
 import com.garagem52.domain.model.User;
 import com.garagem52.ports.output.UserOutputPort;
 import lombok.RequiredArgsConstructor;

@@ -3,35 +3,25 @@ package com.garagem52.adapter.output.persistence.mapper;
 import com.garagem52.adapter.input.dto.response.PecaResponseDTO;
 import com.garagem52.adapter.output.persistence.entity.PecaEntity;
 import com.garagem52.domain.model.Peca;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class PecaPersistenceMapper {
+@Mapper(componentModel = "spring")
+public interface PecaPersistenceMapper {
 
-    public PecaEntity toEntity(Peca peca) {
-        return PecaEntity.builder()
-                .id(peca.getId())
-                .nomePeca(peca.getNome())
-                .descricaoPeca(peca.getDescricao())
-                .precoPeca(peca.getValor())
-                .build();
-    }
+    @Mapping(source = "nome",     target = "nomePeca")
+    @Mapping(source = "descricao", target = "descricaoPeca")
+    @Mapping(source = "valor",    target = "precoPeca")
+    PecaEntity toEntity(Peca peca);
 
-    public Peca toDomain(PecaEntity entity) {
-        return Peca.builder()
-                .id(entity.getId())
-                .nome(entity.getNomePeca())
-                .descricao(entity.getDescricaoPeca())
-                .valor(entity.getPrecoPeca())
-                .build();
-    }
+    @Mapping(source = "nomePeca",    target = "nome")
+    @Mapping(source = "descricaoPeca", target = "descricao")
+    @Mapping(source = "precoPeca",   target = "valor")
+    Peca toDomain(PecaEntity entity);
 
-    public PecaResponseDTO toResponseDTO(Peca peca) {
-        return PecaResponseDTO.builder()
-                .idPeca(peca.getId())
-                .nomePeca(peca.getNome())
-                .descricaoPeca(peca.getDescricao())
-                .precoPeca(peca.getValor())
-                .build();
-    }
+    @Mapping(source = "id",       target = "idPeca")
+    @Mapping(source = "nome",     target = "nomePeca")
+    @Mapping(source = "descricao", target = "descricaoPeca")
+    @Mapping(source = "valor",    target = "precoPeca")
+    PecaResponseDTO toResponseDTO(Peca peca);
 }

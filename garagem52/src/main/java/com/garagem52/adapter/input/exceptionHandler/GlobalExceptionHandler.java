@@ -1,7 +1,16 @@
 package com.garagem52.adapter.input.exceptionHandler;
 
+import com.garagem52.adapter.input.dto.response.ErroResponse;
+import com.garagem52.domain.exception.BusinessException;
+import com.garagem52.domain.exception.fornecedor.FornecedorNotFoundException;
+import com.garagem52.domain.exception.orcamento.MotivoCancelamentoObrigatorioException;
+import com.garagem52.domain.exception.orcamento.MotivoInvalidoException;
+import com.garagem52.domain.exception.orcamento.OrcamentoNotFoundException;
+import com.garagem52.domain.exception.peca.PecaNotFoundException;
+import com.garagem52.domain.exception.servico.ServicoNotFoundException;
 import com.garagem52.domain.exception.user.EmailAlreadyExistsException;
 import com.garagem52.domain.exception.user.UserNotFoundException;
+import com.garagem52.domain.exception.veiculo.VeiculoNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,33 +23,62 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * HEXAGONAL — INBOUND ADAPTER (Exception Handler)
- * Pertence ao adapter/input porque é responsabilidade do lado HTTP
- * traduzir as exceções de domínio em códigos de status HTTP.
- * As exceções do domínio (UserNotFoundException, EmailAlreadyExistsException)
- * não sabem nada de HTTP — são lançadas com significado de negócio.
- * Este handler faz a tradução para a linguagem do protocolo HTTP.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErroResponse> handleBusiness(BusinessException ex) {
+        return ResponseEntity.badRequest().body(buildError(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
+    public ResponseEntity<ErroResponse> handleUserNotFound(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildError(HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleEmailExists(EmailAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage()));
+    public ResponseEntity<ErroResponse> handleEmailExists(EmailAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildError(HttpStatus.CONFLICT, ex.getMessage()));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()));
+    public ResponseEntity<ErroResponse> handleBadCredentials(BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(buildError(HttpStatus.UNAUTHORIZED, ex.getMessage()));
+    }
+
+    @ExceptionHandler(VeiculoNotFoundException.class)
+    public ResponseEntity<ErroResponse> handleVeiculoNotFound(VeiculoNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildError(HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+    @ExceptionHandler(PecaNotFoundException.class)
+    public ResponseEntity<ErroResponse> handlePecaNotFound(PecaNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildError(HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+    @ExceptionHandler(OrcamentoNotFoundException.class)
+    public ResponseEntity<ErroResponse> handleOrcamentoNotFound(OrcamentoNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildError(HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+    @ExceptionHandler(ServicoNotFoundException.class)
+    public ResponseEntity<ErroResponse> handleServicoNotFound(ServicoNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildError(HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+    @ExceptionHandler(FornecedorNotFoundException.class)
+    public ResponseEntity<ErroResponse> handleFornecedorNotFound(FornecedorNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildError(HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+    @ExceptionHandler(MotivoCancelamentoObrigatorioException.class)
+    public ResponseEntity<ErroResponse> handleMotivoCancelamento(MotivoCancelamentoObrigatorioException ex) {
+        return ResponseEntity.badRequest().body(buildError(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(MotivoInvalidoException.class)
+    public ResponseEntity<ErroResponse> handleMotivoInvalido(MotivoInvalidoException ex) {
+        return ResponseEntity.badRequest().body(buildError(HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -57,5 +95,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
-    public record ErrorResponse(int status, String message) {}
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErroResponse> handleRuntime(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(buildError(HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Erro interno: " + ex.getMessage()));
+    }
+
+    private ErroResponse buildError(HttpStatus status, String message) {
+        ErroResponse error = new ErroResponse();
+        error.setStatus(status.value());
+        error.setMessage(message);
+        return error;
+    }
 }
