@@ -3,19 +3,29 @@ package com.garagem52.domain.service;
 import com.garagem52.adapter.input.dto.request.CreateUserRequestDTO;
 import com.garagem52.adapter.input.dto.request.LoginRequestDTO;
 import com.garagem52.adapter.input.dto.request.UpdateUserRequestDTO;
+import com.garagem52.adapter.input.dto.request.VerifyLoginCodeRequestDTO;
 import com.garagem52.adapter.input.dto.response.LoginResponseDTO;
+import com.garagem52.adapter.input.dto.response.MessageResponse;
 import com.garagem52.adapter.input.dto.response.UserResponseDTO;
 import com.garagem52.domain.exception.user.EmailAlreadyExistsException;
+import com.garagem52.domain.exception.user.InvalidTokenException;
 import com.garagem52.domain.exception.user.UserNotFoundException;
+import com.garagem52.domain.model.LoginToken;
 import com.garagem52.domain.model.User;
 import com.garagem52.ports.input.UserInputPort;
+import com.garagem52.ports.output.LoginTokenOutputPort;
 import com.garagem52.ports.output.UserOutputPort;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -33,9 +43,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements UserInputPort {
 
-    private final UserOutputPort userOutputPort;   // OUTPUT PORT — não sabe quem implementa
+    private final UserOutputPort userOutputPort;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final LoginTokenOutputPort loginTokenOutputPort;
+    private final JavaMailSender mailSender;
 
     /**
      * Caso de uso: Cadastrar novo usuário.
@@ -66,19 +78,66 @@ public class UserService implements UserInputPort {
     }
 
     /**
-     * Caso de uso: Autenticação (login).
-     * Valida credenciais e gera um token JWT stateless.
-     * JWT elimina sessão no servidor: cada requisição subsequente
-     * apresenta o token, que é validado pela assinatura criptográfica.
+     * Caso de uso: Autenticação — Etapa 1.
+     * Valida email e senha. Se corretos, envia código de 6 dígitos por e-mail.
+     * O JWT só é emitido após verificarCodigoLogin().
      */
     @Override
-    public LoginResponseDTO login(LoginRequestDTO request) {
+    public MessageResponse login(LoginRequestDTO request) {
         User user = userOutputPort.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(request.getEmail()));
 
         if (!passwordEncoder.matches(request.getSenha(), user.getSenha())) {
             throw new BadCredentialsException("Credenciais inválidas.");
         }
+
+        loginTokenOutputPort.deletarPorUserId(user.getId());
+
+        String codigo = String.format("%06d", new Random().nextInt(1_000_000));
+        LoginToken loginToken = LoginToken.builder()
+                .userId(user.getId())
+                .token(codigo)
+                .expiresAt(LocalDateTime.now().plusMinutes(10))
+                .used(false)
+                .build();
+        loginTokenOutputPort.salvar(loginToken);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(user.getEmail());
+            helper.setFrom("garagem.g.52@gmail.com", "Garagem52");
+            helper.setSubject("Garagem52 — Código de Acesso");
+            helper.setText(EmailTemplateService.loginCode(user.getName(), codigo), true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao enviar e-mail de autenticação: " + e.getMessage(), e);
+        }
+
+        return new MessageResponse("Código de verificação enviado para " + maskEmail(user.getEmail()));
+    }
+
+    /**
+     * Caso de uso: Autenticação — Etapa 2.
+     * Valida o código recebido por e-mail e emite o JWT.
+     */
+    @Override
+    public LoginResponseDTO verificarCodigoLogin(VerifyLoginCodeRequestDTO request) {
+        User user = userOutputPort.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(request.getEmail()));
+
+        LoginToken loginToken = loginTokenOutputPort.buscarPorToken(request.getCodigo())
+                .orElseThrow(() -> new InvalidTokenException("Código inválido"));
+
+        if (!loginToken.getUserId().equals(user.getId())) {
+            throw new InvalidTokenException("Código inválido");
+        }
+        if (loginToken.isExpired() || loginToken.isUsed()) {
+            throw new InvalidTokenException("Código expirado ou já utilizado");
+        }
+
+        loginToken.setUsed(true);
+        loginTokenOutputPort.salvar(loginToken);
 
         String token = jwtService.generateToken(user.getEmail(), user.getRegra().name());
 
@@ -88,6 +147,13 @@ public class UserService implements UserInputPort {
                 .email(user.getEmail())
                 .name(user.getName())
                 .build();
+    }
+
+    /** Mascara o e-mail para exibição: ex**@gmail.com */
+    private String maskEmail(String email) {
+        int at = email.indexOf('@');
+        if (at <= 2) return email;
+        return email.substring(0, 2) + "**" + email.substring(at);
     }
 
     /**

@@ -173,3 +173,25 @@ ALTER TABLE orcamento
 
 ALTER TABLE item_orcado
     ADD COLUMN IF NOT EXISTS fornecedor VARCHAR(255);
+
+CREATE TABLE IF NOT EXISTS login_tokens (
+    id         BIGINT       NOT NULL AUTO_INCREMENT,
+    user_id    BIGINT       NOT NULL,
+    token      VARCHAR(10)  NOT NULL UNIQUE,
+    expires_at DATETIME     NOT NULL,
+    used       BOOLEAN      NOT NULL DEFAULT FALSE,
+
+    PRIMARY KEY (id),
+
+    CONSTRAINT fk_login_token_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- MIGRATION: campo email_cliente no orçamento
+-- Execute se o banco já existia antes desta versão
+-- =============================================
+ALTER TABLE orcamento
+    ADD COLUMN IF NOT EXISTS email_cliente VARCHAR(255);

@@ -49,6 +49,7 @@ public class OrcamentoRepositoryAdapter implements OrcamentoOutputPort {
                 .motivoCancelamento(orcamento.getMotivoCancelamento())
                 .nomeCliente(orcamento.getNomeCliente())
                 .telefoneCliente(orcamento.getTelefoneCliente())
+                .emailCliente(orcamento.getEmailCliente())
                 .descricaoServico(orcamento.getDescricaoServico())
                 .itens(new ArrayList<>())
                 .build();

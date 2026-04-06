@@ -10,7 +10,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "orcamento")
-@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrcamentoEntity {
 
     @Id
@@ -47,6 +51,9 @@ public class OrcamentoEntity {
 
     @Column(name = "telefone_cliente")
     private String telefoneCliente;
+
+    @Column(name = "email_cliente")
+    private String emailCliente;
 
     @Column(name = "descricao_servico", length = 500)
     private String descricaoServico;

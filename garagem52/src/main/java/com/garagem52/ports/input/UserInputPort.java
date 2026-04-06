@@ -3,7 +3,9 @@ package com.garagem52.ports.input;
 import com.garagem52.adapter.input.dto.request.CreateUserRequestDTO;
 import com.garagem52.adapter.input.dto.request.LoginRequestDTO;
 import com.garagem52.adapter.input.dto.request.UpdateUserRequestDTO;
+import com.garagem52.adapter.input.dto.request.VerifyLoginCodeRequestDTO;
 import com.garagem52.adapter.input.dto.response.LoginResponseDTO;
+import com.garagem52.adapter.input.dto.response.MessageResponse;
 import com.garagem52.adapter.input.dto.response.UserResponseDTO;
 
 import java.util.List;
@@ -21,7 +23,11 @@ public interface UserInputPort {
 
     UserResponseDTO cadastro(CreateUserRequestDTO request);
 
-    LoginResponseDTO login(LoginRequestDTO request);
+    /** Etapa 1: valida email+senha e envia código 2FA por e-mail */
+    MessageResponse login(LoginRequestDTO request);
+
+    /** Etapa 2: valida o código recebido e retorna o JWT */
+    LoginResponseDTO verificarCodigoLogin(VerifyLoginCodeRequestDTO request);
 
     UserResponseDTO findById(Long id);
 

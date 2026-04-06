@@ -7,9 +7,10 @@ import com.garagem52.domain.model.User;
 import com.garagem52.ports.input.PasswordResetInputPort;
 import com.garagem52.ports.output.PasswordResetTokenOutputPort;
 import com.garagem52.ports.output.UserOutputPort;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -37,16 +38,20 @@ public class PasswordResetService implements PasswordResetInputPort {
 
         passwordResetTokenOutputPort.salvar(resetToken);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setFrom("garagem.g.52@gmail.com");
-        message.setSubject("Garagem52 - Recuperação de Senha");
-        message.setText("Seu código de recuperação de senha:\n\n"
-                + resetToken.getToken()
-                + "\n\nEste código expira em 30 minutos.\n"
-                + "Use-o para redefinir sua senha no aplicativo.");
-
-        mailSender.send(message);
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(email);
+            helper.setFrom("garagem.g.52@gmail.com", "Garagem52");
+            helper.setSubject("Garagem52 — Redefinição de Senha");
+            helper.setText(
+                    EmailTemplateService.passwordReset(user.getName(), resetToken.getToken()),
+                    true // isHtml = true
+            );
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao enviar e-mail de recuperação: " + e.getMessage(), e);
+        }
     }
 
     @Override
