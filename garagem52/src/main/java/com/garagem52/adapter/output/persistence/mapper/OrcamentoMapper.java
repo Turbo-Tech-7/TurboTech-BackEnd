@@ -29,6 +29,7 @@ public interface OrcamentoMapper {
     @Mapping(source = "itens", target = "itens")
     @Mapping(source = "nomeCliente", target = "nomeCliente")
     @Mapping(source = "telefoneCliente", target = "telefoneCliente")
+    @Mapping(source = "emailCliente", target = "emailCliente")
     @Mapping(source = "descricaoServico",target = "descricaoServico")
     @Mapping(target = "veiculo", ignore = true)
     Orcamento toDomain(OrcamentoEntity entity);

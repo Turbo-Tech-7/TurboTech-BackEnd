@@ -1,14 +1,14 @@
 package com.garagem52.adapter.input.controller;
 
 import com.garagem52.adapter.input.doc.OrcamentoPdfControllerSwagger;
+import com.garagem52.adapter.input.dto.response.MessageResponse;
 import com.garagem52.ports.input.OrcamentoPdfInputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 
@@ -23,14 +23,18 @@ public class OrcamentoPdfController implements OrcamentoPdfControllerSwagger {
     @GetMapping("/{id}/pdf")
     public ResponseEntity<InputStreamResource> gerarPdf(@PathVariable Long id) {
         byte[] pdfBytes = orcamentoPdfInputPort.gerarPdf(id);
-
         String filename = "orcamento-" + String.format("%04d", id) + ".pdf";
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(pdfBytes);
-
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                .body(new InputStreamResource(bis));
+                .body(new InputStreamResource(new ByteArrayInputStream(pdfBytes)));
+    }
+
+    @Override
+    @PostMapping("/{id}/pdf/email")
+    public ResponseEntity<MessageResponse> enviarPdfPorEmail(@PathVariable Long id) {
+        orcamentoPdfInputPort.enviarPdfPorEmail(id);
+        return ResponseEntity.ok(new MessageResponse(
+                "Orçamento #" + String.format("%04d", id) + " enviado com sucesso para o e-mail do cliente."));
     }
 }

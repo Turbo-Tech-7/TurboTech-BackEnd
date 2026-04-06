@@ -17,8 +17,11 @@ public class BeanConfiguration {
     public UserService userServicePort(
             UserOutputPort userOutputPort,
             PasswordEncoder passwordEncoder,
-            JwtService jwtService) {
-        return new UserService(userOutputPort, passwordEncoder, jwtService);
+            JwtService jwtService,
+            LoginTokenOutputPort loginTokenOutputPort,
+            JavaMailSender mailSender) {
+        return new UserService(userOutputPort, passwordEncoder, jwtService,
+                               loginTokenOutputPort, mailSender);
     }
 
     @Bean
@@ -74,7 +77,8 @@ public class BeanConfiguration {
     @Bean
     public OrcamentoPdfApplicationService orcamentoPdfApplicationService(
             OrcamentoInputPort orcamentoInputPort,
-            OrcamentoPdfService orcamentoPdfService) {
-        return new OrcamentoPdfApplicationService(orcamentoInputPort, orcamentoPdfService);
+            OrcamentoPdfService orcamentoPdfService,
+            JavaMailSender mailSender) {
+        return new OrcamentoPdfApplicationService(orcamentoInputPort, orcamentoPdfService, mailSender);
     }
 }

@@ -7,7 +7,11 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreateOrcamentoRequestDTO {
 
     @NotNull(message = "ID do serviço é obrigatório")
@@ -22,6 +26,8 @@ public class CreateOrcamentoRequestDTO {
     private String nomeCliente;
 
     private String telefoneCliente;
+
+    private String emailCliente;
 
     @NotNull(message = "Valor da mão de obra é obrigatório")
     private Double valorMaoDeObra;

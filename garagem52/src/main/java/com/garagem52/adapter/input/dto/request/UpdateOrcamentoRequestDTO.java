@@ -10,6 +10,9 @@ import java.util.List;
 public class UpdateOrcamentoRequestDTO {
     private Double valorMaoDeObra;
     private String descricaoServico;
+    private String nomeCliente;
+    private String telefoneCliente;
+    private String emailCliente;
     private List<ItemOrcadoRequestDTO> itens;
     private OrcamentoStatus status;
     private MotivoCancelamento motivoCancelamento;

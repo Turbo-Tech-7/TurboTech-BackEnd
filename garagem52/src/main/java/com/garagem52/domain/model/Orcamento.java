@@ -19,10 +19,10 @@ public class Orcamento {
     private LocalDateTime dataOrcamento;
     private OrcamentoStatus status;
     private MotivoCancelamento motivoCancelamento;
-    // Dados enriquecidos para exibição e PDF
     private Veiculo veiculo;
     private List<ItemOrcado> itens;
     private String descricaoServico;
     private String nomeCliente;
     private String telefoneCliente;
+    private String emailCliente;
 }

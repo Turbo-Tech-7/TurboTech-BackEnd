@@ -42,6 +42,7 @@ public class OrcamentoService implements OrcamentoInputPort {
                 .status(OrcamentoStatus.ABERTO)
                 .nomeCliente(request.getNomeCliente())
                 .telefoneCliente(request.getTelefoneCliente())
+                .emailCliente(request.getEmailCliente())
                 .descricaoServico(request.getDescricaoServico())
                 .itens(itens)
                 .build();
@@ -79,19 +80,19 @@ public class OrcamentoService implements OrcamentoInputPort {
         Orcamento existing = orcamentoOutputPort.findById(id)
                 .orElseThrow(() -> new OrcamentoNotFoundException(id));
 
-        // Atualiza campos básicos
         if (request.getValorMaoDeObra() != null) existing.setValorMaoDeObra(request.getValorMaoDeObra());
         if (request.getDescricaoServico() != null) existing.setDescricaoServico(request.getDescricaoServico());
+        if (request.getNomeCliente() != null) existing.setNomeCliente(request.getNomeCliente());
+        if (request.getTelefoneCliente() != null) existing.setTelefoneCliente(request.getTelefoneCliente());
+        if (request.getEmailCliente() != null) existing.setEmailCliente(request.getEmailCliente());
         if (request.getItens() != null && !request.getItens().isEmpty()) {
             existing.setItens(buildItens(request.getItens()));
         }
 
-        // Atualiza status com validação de motivo
         if (request.getStatus() != null) {
             aplicarTransicaoStatus(existing, request);
         }
 
-        // Recalcula total
         double totalPecas = existing.getItens() == null ? 0 :
                 existing.getItens().stream()
                         .mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
@@ -100,10 +101,6 @@ public class OrcamentoService implements OrcamentoInputPort {
         return mapper.toResponseDTO(orcamentoOutputPort.save(existing));
     }
 
-    /**
-     * Endpoint dedicado ao cancelamento (mantido por semântica REST clara).
-     * Internamente delega ao update com status CANCELADO.
-     */
     @Override
     public OrcamentoResponseDTO cancelar(Long id, CancelarOrcamentoRequestDTO request) {
         if (request.getMotivo() == null) {
@@ -124,8 +121,6 @@ public class OrcamentoService implements OrcamentoInputPort {
         orcamentoOutputPort.deleteById(id);
     }
 
-    // ── helpers ───────────────────────────────────────────────────────────────
-
     /**
      * Regras de transição de status via PUT /orcamentos/{id}:
      * - ABERTO / FINALIZADO: limpa o motivo (reabrir ou concluir não precisa de motivo)
@@ -141,7 +136,6 @@ public class OrcamentoService implements OrcamentoInputPort {
             }
             existing.setMotivoCancelamento(request.getMotivoCancelamento());
         } else {
-            // Reabrir (ABERTO) ou concluir (FINALIZADO): limpa motivo anterior
             if (request.getMotivoCancelamento() != null) {
                 throw new MotivoInvalidoException();
             }

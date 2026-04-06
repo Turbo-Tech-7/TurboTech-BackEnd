@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/password-reset/**").permitAll()
-                .requestMatchers("/orcamentos/{id}/pdf").permitAll()
+                .requestMatchers(HttpMethod.GET,  "/orcamentos/{id}/pdf").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers("/veiculos/**").authenticated()
                 .requestMatchers("/pecas/**").authenticated()

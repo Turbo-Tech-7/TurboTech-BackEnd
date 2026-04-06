@@ -5,7 +5,11 @@ import lombok.*;
 
 @Entity
 @Table(name = "item_orcado")
-@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemOrcadoEntity {
 
     @Id

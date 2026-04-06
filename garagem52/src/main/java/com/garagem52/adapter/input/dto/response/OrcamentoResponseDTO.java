@@ -22,6 +22,7 @@ public class OrcamentoResponseDTO {
     private List<ItemOrcadoResponseDTO> itens;
     private String nomeCliente;
     private String telefoneCliente;
+    private String emailCliente;
     private String descricaoServico;
     private VeiculoResponseDTO veiculo;
 }
