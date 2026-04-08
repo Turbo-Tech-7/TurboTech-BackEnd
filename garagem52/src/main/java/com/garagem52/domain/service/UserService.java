@@ -119,22 +119,20 @@ public class UserService implements UserInputPort {
 
     /**
      * Caso de uso: Autenticação — Etapa 2.
-     * Valida o código recebido por e-mail e emite o JWT.
+     * Recebe apenas o código de 6 dígitos. O usuário é identificado pelo próprio
+     * token armazenado (userId), eliminando a necessidade de enviar o e-mail novamente.
      */
     @Override
     public LoginResponseDTO verificarCodigoLogin(VerifyLoginCodeRequestDTO request) {
-        User user = userOutputPort.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException(request.getEmail()));
-
         LoginToken loginToken = loginTokenOutputPort.buscarPorToken(request.getCodigo())
                 .orElseThrow(() -> new InvalidTokenException("Código inválido"));
 
-        if (!loginToken.getUserId().equals(user.getId())) {
-            throw new InvalidTokenException("Código inválido");
-        }
         if (loginToken.isExpired() || loginToken.isUsed()) {
             throw new InvalidTokenException("Código expirado ou já utilizado");
         }
+
+        User user = userOutputPort.findById(loginToken.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(loginToken.getUserId()));
 
         loginToken.setUsed(true);
         loginTokenOutputPort.salvar(loginToken);

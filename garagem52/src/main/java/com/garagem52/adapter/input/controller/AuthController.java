@@ -20,11 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * HEXAGONAL — input ADAPTER (Controller)
  * Adapter HTTP de entrada para autenticação.
- *
  * Endpoints públicos (sem JWT):
- *   POST /auth/register      → cadastro
- *   POST /auth/login         → etapa 1: valida email+senha, envia código por e-mail
- *   POST /auth/login/verify  → etapa 2: valida código e retorna token JWT
+ *   POST /auth/register → cadastro
+ *   POST /auth/login → etapa 1: valida email+senha, envia código por e-mail
+ *   POST /auth/login/verify → etapa 2: valida código e retorna token JWT
  */
 @RestController
 @RequestMapping("/auth")
