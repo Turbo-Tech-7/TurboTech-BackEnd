@@ -180,8 +180,8 @@ public class OrcamentoPdfService {
                             * (i.getQuantidade() != null ? i.getQuantidade() : 1))
                     .sum();
         }
-        double mdo   = o.getValorMaoDeObra() != null ? o.getValorMaoDeObra() : 0;
-        double total = o.getValorTotal()      != null ? o.getValorTotal()     : pecas + mdo;
+        double mdo = o.getValorMaoDeObra() != null ? o.getValorMaoDeObra() : 0;
+        double total = o.getValorTotal() != null ? o.getValorTotal() : pecas + mdo;
 
         Table t = new Table(UnitValue.createPercentArray(new float[]{70, 30}))
                 .setWidth(UnitValue.createPercentValue(100))

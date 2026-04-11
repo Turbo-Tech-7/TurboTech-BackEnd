@@ -30,6 +30,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> {})
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
@@ -38,6 +39,7 @@ public class SecurityConfig {
                 .requestMatchers("/password-reset/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/orcamentos/{id}/pdf").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/veiculos/**").authenticated()
                 .requestMatchers("/pecas/**").authenticated()
                 .requestMatchers("/fornecedores/**").authenticated()
