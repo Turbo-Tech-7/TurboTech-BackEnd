@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS users (
     cep VARCHAR(255),
     senha VARCHAR(255) NOT NULL,
     regra     ENUM('USER','ADMIN') NOT NULL DEFAULT 'USER',
-    PRIMARY KEY (id)
+    PRIMARY KEY (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS veiculo(
@@ -149,7 +149,7 @@ CREATE TABLE IF NOT EXISTS password_reset_token (
 
     CONSTRAINT fk_prt_user
         FOREIGN KEY (user_id)
-        REFERENCES users(id)
+        REFERENCES users(user_id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS login_tokens (
 
     CONSTRAINT fk_login_token_user
         FOREIGN KEY (user_id)
-        REFERENCES users(id)
+        REFERENCES users(user_id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
