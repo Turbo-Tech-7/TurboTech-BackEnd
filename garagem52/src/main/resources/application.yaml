@@ -39,6 +39,10 @@ jwt:
 api:
   token: ${API_TOKEN}
 
+cors:
+  allowed-origins:
+    - http://localhost:5173
+
 logging:
   level:
     org.springframework.web.servlet.handler.HandlerMappingIntrospector: ERROR
