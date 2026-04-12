@@ -1,7 +1,7 @@
 package com.garagem52.config;
 
 import com.garagem52.domain.security.JwtAuthFilter;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,7 +17,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
@@ -28,6 +27,13 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/swagger-ui.html"
     };
+
+    public SecurityConfig(
+            JwtAuthFilter jwtAuthFilter,
+            @Qualifier("corsConfigurationSource") CorsConfigurationSource corsConfig) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.corsConfig = corsConfig;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
