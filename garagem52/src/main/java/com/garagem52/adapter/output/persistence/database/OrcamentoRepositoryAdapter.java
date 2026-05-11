@@ -1,22 +1,15 @@
 package com.garagem52.adapter.output.persistence.database;
 
-import com.garagem52.adapter.output.persistence.entity.*;
 import com.garagem52.adapter.output.persistence.mapper.OrcamentoMapper;
-import com.garagem52.adapter.output.persistence.repository.JpaOrcamentoRepository;
-import com.garagem52.adapter.output.persistence.repository.JpaPecaRepository;
-import com.garagem52.adapter.output.persistence.repository.JpaServicoRepository;
-import com.garagem52.adapter.output.persistence.repository.JpaVeiculoRepository;
-import com.garagem52.domain.exception.peca.PecaNotFoundException;
-import com.garagem52.domain.exception.servico.ServicoNotFoundException;
-import com.garagem52.domain.exception.veiculo.VeiculoNotFoundException;
-import com.garagem52.domain.model.ItemOrcado;
+import com.garagem52.adapter.output.persistence.repository.MongoOrcamentoRepository;
+import com.garagem52.adapter.output.persistence.repository.MongoVeiculoRepository;
 import com.garagem52.domain.model.Orcamento;
+import com.garagem52.domain.model.Veiculo;
 import com.garagem52.domain.utils.enums.OrcamentoStatus;
 import com.garagem52.ports.output.OrcamentoOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,106 +18,59 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrcamentoRepositoryAdapter implements OrcamentoOutputPort {
 
-    private final JpaOrcamentoRepository jpaOrcamentoRepository;
-    private final JpaServicoRepository jpaServicoRepository;
-    private final JpaVeiculoRepository jpaVeiculoRepository;
-    private final JpaPecaRepository jpaPecaRepository;
+    private final MongoOrcamentoRepository repository;
+    private final MongoVeiculoRepository veiculoRepository;
     private final OrcamentoMapper mapper;
 
     @Override
     public Orcamento save(Orcamento orcamento) {
-        ServicoEntity servico = jpaServicoRepository.findById(orcamento.getServicoId())
-                .orElseThrow(() -> new ServicoNotFoundException(orcamento.getServicoId()));
-        VeiculoEntity veiculo = jpaVeiculoRepository.findById(orcamento.getVeiculoId())
-                .orElseThrow(() -> new VeiculoNotFoundException(orcamento.getVeiculoId()));
-
-        OrcamentoEntity entity = OrcamentoEntity.builder()
-                .id(orcamento.getId())
-                .servico(servico)
-                .veiculo(veiculo)
-                .valorMaoDeObra(orcamento.getValorMaoDeObra())
-                .valorTotal(orcamento.getValorTotal())
-                .dataOrcamento(orcamento.getDataOrcamento())
-                .status(orcamento.getStatus())
-                .motivoCancelamento(orcamento.getMotivoCancelamento())
-                .nomeCliente(orcamento.getNomeCliente())
-                .telefoneCliente(orcamento.getTelefoneCliente())
-                .emailCliente(orcamento.getEmailCliente())
-                .descricaoServico(orcamento.getDescricaoServico())
-                .itens(new ArrayList<>())
-                .build();
-
-        OrcamentoEntity saved = jpaOrcamentoRepository.save(entity);
-
-        if (orcamento.getItens() != null) {
-            saved.getItens().clear();
-            saved.getItens().addAll(buildItens(orcamento.getItens(), saved));
-            saved = jpaOrcamentoRepository.save(saved);
-        }
-
-        return enrich(mapper.toDomain(saved), saved);
+        return enrich(mapper.toDomain(repository.save(mapper.toEntity(orcamento))));
     }
 
     @Override
-    public Optional<Orcamento> findById(Long id) {
-        return jpaOrcamentoRepository.findById(id)
-                .map(e -> enrich(mapper.toDomain(e), e));
+    public Optional<Orcamento> findById(String id) {
+        return repository.findById(id).map(e -> enrich(mapper.toDomain(e)));
     }
 
     @Override
     public List<Orcamento> findAll() {
-        return jpaOrcamentoRepository.findAll().stream()
-                .map(e -> enrich(mapper.toDomain(e), e)).collect(Collectors.toList());
+        return repository.findAll().stream()
+                .map(e -> enrich(mapper.toDomain(e))).collect(Collectors.toList());
     }
 
     @Override
-    public List<Orcamento> findByVeiculoId(Long veiculoId) {
-        return jpaOrcamentoRepository.findByVeiculoId(veiculoId).stream()
-                .map(e -> enrich(mapper.toDomain(e), e)).collect(Collectors.toList());
+    public List<Orcamento> findByVeiculoId(String veiculoId) {
+        return repository.findByVeiculoId(veiculoId).stream()
+                .map(e -> enrich(mapper.toDomain(e))).collect(Collectors.toList());
     }
 
     @Override
     public List<Orcamento> findByStatus(OrcamentoStatus status) {
-        return jpaOrcamentoRepository.findByStatus(status).stream()
-                .map(e -> enrich(mapper.toDomain(e), e)).collect(Collectors.toList());
+        return repository.findByStatus(status).stream()
+                .map(e -> enrich(mapper.toDomain(e))).collect(Collectors.toList());
     }
 
     @Override
-    public void deleteById(Long id) {
-        jpaOrcamentoRepository.deleteById(id);
+    public void deleteById(String id) {
+        repository.deleteById(id);
     }
 
-    private List<ItemOrcadoEntity> buildItens(List<ItemOrcado> itens, OrcamentoEntity orcEntity) {
-        return itens.stream().map(item -> {
-            PecaEntity peca = jpaPecaRepository.findById(item.getPecaId())
-                    .orElseThrow(() -> new PecaNotFoundException("Peça não encontrada: " + item.getPecaId()));
-            return ItemOrcadoEntity.builder()
-                    .orcamento(orcEntity)
-                    .peca(peca)
-                    .fornecedor(item.getFornecedor())
-                    .valor(item.getValor())
-                    .quantidade(item.getQuantidade())
-                    .build();
-        }).collect(Collectors.toList());
-    }
-
-    private Orcamento enrich(Orcamento orcamento, OrcamentoEntity entity) {
-        if (entity.getVeiculo() != null) {
-            orcamento.setVeiculo(com.garagem52.domain.model.Veiculo.builder()
-                    .id(entity.getVeiculo().getId())
-                    .marca(entity.getVeiculo().getMarca())
-                    .modelo(entity.getVeiculo().getModelo())
-                    .ano(entity.getVeiculo().getAno())
-                    .placa(entity.getVeiculo().getPlaca())
-                    .cor(entity.getVeiculo().getCor())
-                    .build());
-        }
-        orcamento.setNomeCliente(entity.getNomeCliente());
-        orcamento.setTelefoneCliente(entity.getTelefoneCliente());
-        if (entity.getDescricaoServico() != null) {
-            orcamento.setDescricaoServico(entity.getDescricaoServico());
-        } else if (entity.getServico() != null) {
-            orcamento.setDescricaoServico(entity.getServico().getDescricaoProblema());
+    /**
+     * Substitui o FetchType.LAZY do JPA — resolve o Veiculo via lookup
+     * no MongoDB e popula o campo transiente no modelo de domínio.
+     */
+    private Orcamento enrich(Orcamento orcamento) {
+        if (orcamento.getVeiculoId() != null) {
+            veiculoRepository.findById(orcamento.getVeiculoId()).ifPresent(v ->
+                orcamento.setVeiculo(Veiculo.builder()
+                        .id(v.getId())
+                        .marca(v.getMarca())
+                        .modelo(v.getModelo())
+                        .ano(v.getAno())
+                        .placa(v.getPlaca())
+                        .cor(v.getCor())
+                        .build())
+            );
         }
         return orcamento;
     }

@@ -13,7 +13,7 @@ public class CreateServicoRequestDTO {
     private String servicoOrcado;
 
     @NotNull(message = "ID do veículo é obrigatório")
-    private Long veiculoId;
+    private String veiculoId;
 
     private String descricaoProblema;
 }

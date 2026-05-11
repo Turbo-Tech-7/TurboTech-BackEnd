@@ -7,10 +7,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface FornecedorPersistenceMapper {
-
     FornecedorEntity toEntity(Fornecedor fornecedor);
-
     Fornecedor toDomain(FornecedorEntity entity);
-
     FornecedorResponseDTO toResponseDTO(Fornecedor fornecedor);
 }

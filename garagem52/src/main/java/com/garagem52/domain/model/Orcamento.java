@@ -11,9 +11,9 @@ import java.util.List;
 @Data
 @Builder
 public class Orcamento {
-    private Long id;
-    private Long servicoId;
-    private Long veiculoId;
+    private String id;
+    private String servicoId;
+    private String veiculoId;
     private Double valorMaoDeObra;
     private Double valorTotal;
     private LocalDateTime dataOrcamento;

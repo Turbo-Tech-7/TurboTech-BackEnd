@@ -6,12 +6,10 @@ import lombok.Data;
 @Data
 @Builder
 public class Veiculo {
-
-    private Long id;
+    private String id;  // ObjectId do MongoDB
     private String marca;
     private String modelo;
     private Integer ano;
     private String placa;
     private String cor;
-
 }

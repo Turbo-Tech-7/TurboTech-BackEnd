@@ -23,13 +23,13 @@ public class OrcamentoPdfApplicationService implements OrcamentoPdfInputPort {
             DateTimeFormatter.ofPattern("dd/MM/yyyy", new Locale("pt", "BR"));
 
     @Override
-    public byte[] gerarPdf(Long orcamentoId) {
+    public byte[] gerarPdf(String orcamentoId) {
         OrcamentoResponseDTO orcamento = orcamentoInputPort.findById(orcamentoId);
         return pdfService.gerar(orcamento);
     }
 
     @Override
-    public void enviarPdfPorEmail(Long orcamentoId) {
+    public void enviarPdfPorEmail(String orcamentoId) {
         OrcamentoResponseDTO orcamento = orcamentoInputPort.findById(orcamentoId);
 
         if (orcamento.getNomeCliente() == null || orcamento.getNomeCliente().isBlank()) {

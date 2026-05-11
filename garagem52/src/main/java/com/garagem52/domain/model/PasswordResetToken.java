@@ -6,14 +6,13 @@ import java.time.LocalDateTime;
 
 @Data
 public class PasswordResetToken {
-
-    private Long id;
+    private String id;      // ObjectId do MongoDB
     private String token;
-    private Long userId;
+    private String userId;  // referência por ObjectId
     private LocalDateTime expiresAt;
     private boolean used;
 
-    public boolean isExpired(){
+    public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiresAt);
     }
 }

@@ -15,10 +15,10 @@ import java.util.List;
 public class CreateOrcamentoRequestDTO {
 
     @NotNull(message = "ID do serviço é obrigatório")
-    private Long servicoId;
+    private String servicoId;
 
     @NotNull(message = "ID do veículo é obrigatório")
-    private Long veiculoId;
+    private String veiculoId;
 
     @NotBlank(message = "Descrição do serviço é obrigatória")
     private String descricaoServico;

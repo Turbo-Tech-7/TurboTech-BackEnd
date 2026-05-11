@@ -27,7 +27,7 @@ public class FornecedorController implements FornecedorControllerSwagger {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<FornecedorResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<FornecedorResponseDTO> findById(@PathVariable String id) {
         return ResponseEntity.ok(fornecedorInputPort.findById(id));
     }
 
@@ -46,13 +46,13 @@ public class FornecedorController implements FornecedorControllerSwagger {
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<FornecedorResponseDTO> update(
-            @PathVariable Long id, @Valid @RequestBody CreateFornecedorRequestDTO request) {
+            @PathVariable String id, @Valid @RequestBody CreateFornecedorRequestDTO request) {
         return ResponseEntity.ok(fornecedorInputPort.update(id, request));
     }
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable String id) {
         fornecedorInputPort.delete(id);
         return ResponseEntity.noContent().build();
     }

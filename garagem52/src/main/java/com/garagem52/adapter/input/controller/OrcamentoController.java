@@ -1,9 +1,7 @@
 package com.garagem52.adapter.input.controller;
 
 import com.garagem52.adapter.input.doc.OrcamentoControllerSwagger;
-import com.garagem52.adapter.input.dto.request.CancelarOrcamentoRequestDTO;
-import com.garagem52.adapter.input.dto.request.CreateOrcamentoRequestDTO;
-import com.garagem52.adapter.input.dto.request.UpdateOrcamentoRequestDTO;
+import com.garagem52.adapter.input.dto.request.*;
 import com.garagem52.adapter.input.dto.response.OrcamentoResponseDTO;
 import com.garagem52.ports.input.OrcamentoInputPort;
 import jakarta.validation.Valid;
@@ -29,7 +27,7 @@ public class OrcamentoController implements OrcamentoControllerSwagger {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<OrcamentoResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<OrcamentoResponseDTO> findById(@PathVariable String id) {
         return ResponseEntity.ok(orcamentoInputPort.findById(id));
     }
 
@@ -41,7 +39,7 @@ public class OrcamentoController implements OrcamentoControllerSwagger {
 
     @Override
     @GetMapping("/por-veiculo")
-    public ResponseEntity<List<OrcamentoResponseDTO>> findByVeiculoId(@RequestParam Long veiculoId) {
+    public ResponseEntity<List<OrcamentoResponseDTO>> findByVeiculoId(@RequestParam String veiculoId) {
         return ResponseEntity.ok(orcamentoInputPort.findByVeiculoId(veiculoId));
     }
 
@@ -54,20 +52,20 @@ public class OrcamentoController implements OrcamentoControllerSwagger {
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<OrcamentoResponseDTO> update(
-            @PathVariable Long id, @Valid @RequestBody UpdateOrcamentoRequestDTO request) {
+            @PathVariable String id, @Valid @RequestBody UpdateOrcamentoRequestDTO request) {
         return ResponseEntity.ok(orcamentoInputPort.update(id, request));
     }
 
     @Override
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<OrcamentoResponseDTO> cancelar(
-            @PathVariable Long id, @Valid @RequestBody CancelarOrcamentoRequestDTO request) {
+            @PathVariable String id, @Valid @RequestBody CancelarOrcamentoRequestDTO request) {
         return ResponseEntity.ok(orcamentoInputPort.cancelar(id, request));
     }
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable String id) {
         orcamentoInputPort.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -1,7 +1,7 @@
 package com.garagem52.adapter.output.persistence.database;
 
 import com.garagem52.adapter.output.persistence.mapper.PasswordResetTokenMapper;
-import com.garagem52.adapter.output.persistence.repository.PasswordResetTokenRepository;
+import com.garagem52.adapter.output.persistence.repository.MongoPasswordResetTokenRepository;
 import com.garagem52.domain.model.PasswordResetToken;
 import com.garagem52.ports.output.PasswordResetTokenOutputPort;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PasswordResetTokenRepositoryAdapter implements PasswordResetTokenOutputPort {
 
-    private final PasswordResetTokenRepository repository;
+    private final MongoPasswordResetTokenRepository repository;
     private final PasswordResetTokenMapper mapper;
 
     @Override
@@ -28,6 +28,8 @@ public class PasswordResetTokenRepositoryAdapter implements PasswordResetTokenOu
 
     @Override
     public void deletar(PasswordResetToken token) {
-        repository.deleteById(token.getId());
+        if (token.getId() != null) {
+            repository.deleteById(token.getId());
+        }
     }
 }

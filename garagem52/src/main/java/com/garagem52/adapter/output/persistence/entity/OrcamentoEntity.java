@@ -2,62 +2,66 @@ package com.garagem52.adapter.output.persistence.entity;
 
 import com.garagem52.domain.utils.enums.MotivoCancelamento;
 import com.garagem52.domain.utils.enums.OrcamentoStatus;
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "orcamento")
+/**
+ * Era @Entity com @ManyToOne ServicoEntity e @ManyToOne VeiculoEntity.
+ * No MongoDB: servicoId e veiculoId são Strings (ObjectId).
+ * Era @OneToMany List<ItemOrcadoEntity>: agora embedded (array no documento).
+ */
+@Document(collection = "orcamento")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrcamentoEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "servico_id", nullable = false)
-    private ServicoEntity servico;
+    @Indexed
+    @Field("servico_id")
+    private String servicoId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "veiculo_id", nullable = false)
-    private VeiculoEntity veiculo;
+    @Indexed
+    @Field("veiculo_id")
+    private String veiculoId;
 
-    @Column(name = "valor_mao_de_obra")
+    @Field("valor_mao_de_obra")
     private Double valorMaoDeObra;
 
-    @Column(name = "valor_total")
+    @Field("valor_total")
     private Double valorTotal;
 
-    @Column(name = "data_orcamento")
+    @Indexed
+    @Field("data_orcamento")
     private LocalDateTime dataOrcamento;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
+    @Indexed
     private OrcamentoStatus status;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "motivo_cancelamento", length = 30)
+    @Field("motivo_cancelamento")
     private MotivoCancelamento motivoCancelamento;
 
-    @Column(name = "nome_cliente")
+    @Field("nome_cliente")
     private String nomeCliente;
 
-    @Column(name = "telefone_cliente")
+    @Field("telefone_cliente")
     private String telefoneCliente;
 
-    @Column(name = "email_cliente")
+    @Field("email_cliente")
     private String emailCliente;
 
-    @Column(name = "descricao_servico", length = 500)
+    @Field("descricao_servico")
     private String descricaoServico;
 
-    @OneToMany(mappedBy = "orcamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    // Array embedded — substitui collection item_orcado + JOINs
     private List<ItemOrcadoEntity> itens;
 }

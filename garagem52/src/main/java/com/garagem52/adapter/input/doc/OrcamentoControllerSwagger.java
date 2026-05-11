@@ -38,13 +38,13 @@ public interface OrcamentoControllerSwagger {
                     content = @Content(schema = @Schema(implementation = OrcamentoResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Não encontrado")
     })
-    ResponseEntity<OrcamentoResponseDTO> findById(@PathVariable Long id);
+    ResponseEntity<OrcamentoResponseDTO> findById(@PathVariable String id);
 
     @Operation(summary = "Listar todos os orçamentos")
     ResponseEntity<List<OrcamentoResponseDTO>> findAll();
 
     @Operation(summary = "Buscar por veículo")
-    ResponseEntity<List<OrcamentoResponseDTO>> findByVeiculoId(@RequestParam Long veiculoId);
+    ResponseEntity<List<OrcamentoResponseDTO>> findByVeiculoId(@RequestParam String veiculoId);
 
     @Operation(summary = "Buscar por status (ABERTO, FINALIZADO, CANCELADO)")
     ResponseEntity<List<OrcamentoResponseDTO>> findByStatus(@RequestParam String status);
@@ -73,7 +73,7 @@ public interface OrcamentoControllerSwagger {
             @ApiResponse(responseCode = "400", description = "Motivo ausente para CANCELADO ou motivo indevido para outros status"),
             @ApiResponse(responseCode = "404", description = "Orçamento não encontrado")
     })
-    ResponseEntity<OrcamentoResponseDTO> update(@PathVariable Long id,
+    ResponseEntity<OrcamentoResponseDTO> update(@PathVariable String id,
             @Valid @RequestBody UpdateOrcamentoRequestDTO request);
 
     @Operation(
@@ -95,10 +95,10 @@ public interface OrcamentoControllerSwagger {
             @ApiResponse(responseCode = "400", description = "Motivo não informado"),
             @ApiResponse(responseCode = "404", description = "Orçamento não encontrado")
     })
-    ResponseEntity<OrcamentoResponseDTO> cancelar(@PathVariable Long id,
+    ResponseEntity<OrcamentoResponseDTO> cancelar(@PathVariable String id,
             @Valid @RequestBody CancelarOrcamentoRequestDTO request);
 
     @Operation(summary = "Deletar orçamento")
     @ApiResponse(responseCode = "204", description = "Deletado com sucesso")
-    ResponseEntity<Void> delete(@PathVariable Long id);
+    ResponseEntity<Void> delete(@PathVariable String id);
 }

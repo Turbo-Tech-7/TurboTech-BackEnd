@@ -16,39 +16,27 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface OrcamentoMapper {
 
-    @Mapping(source = "orcamento.id", target = "orcamentoId")
-    @Mapping(source = "peca.id", target = "pecaId")
-    @Mapping(source = "peca.nomePeca", target = "nomePeca")
-    @Mapping(source = "fornecedor", target = "fornecedor")
+    // Mapeamento direto — pecaId e nomePeca são String em ambos os lados
     ItemOrcado itemToDomain(ItemOrcadoEntity entity);
-
+    ItemOrcadoEntity itemToEntity(ItemOrcado item);
     ItemOrcadoResponseDTO itemToResponseDTO(ItemOrcado item);
 
-    @Mapping(source = "servico.id", target = "servicoId")
-    @Mapping(source = "veiculo.id", target = "veiculoId")
-    @Mapping(source = "itens", target = "itens")
-    @Mapping(source = "nomeCliente", target = "nomeCliente")
-    @Mapping(source = "telefoneCliente", target = "telefoneCliente")
-    @Mapping(source = "emailCliente", target = "emailCliente")
-    @Mapping(source = "descricaoServico",target = "descricaoServico")
     @Mapping(target = "veiculo", ignore = true)
     Orcamento toDomain(OrcamentoEntity entity);
 
-    @Mapping(target = "statusDescricao", ignore = true)
+    OrcamentoEntity toEntity(Orcamento orcamento);
+
+    @Mapping(target = "statusDescricao",             ignore = true)
     @Mapping(target = "motivoCancelamentoDescricao", ignore = true)
     OrcamentoResponseDTO toResponseDTO(Orcamento orcamento);
 
     @AfterMapping
-    default void preencherDescricoes(Orcamento orcamento,
-                                     @MappingTarget OrcamentoResponseDTO dto) {
-        if (orcamento.getStatus() != null) {
-            dto.setStatusDescricao(orcamento.getStatus().getDescricao());
-        }
-        if (orcamento.getMotivoCancelamento() != null) {
-            dto.setMotivoCancelamentoDescricao(orcamento.getMotivoCancelamento().getDescricao());
-        }
+    default void preencherDescricoes(Orcamento o, @MappingTarget OrcamentoResponseDTO dto) {
+        if (o.getStatus() != null)             dto.setStatusDescricao(o.getStatus().getDescricao());
+        if (o.getMotivoCancelamento() != null) dto.setMotivoCancelamentoDescricao(o.getMotivoCancelamento().getDescricao());
     }
 
-    List<ItemOrcado> itemListToDomain(List<ItemOrcadoEntity> entities);
+    List<ItemOrcado>           itemListToDomain(List<ItemOrcadoEntity> entities);
+    List<ItemOrcadoEntity>     itemListToEntity(List<ItemOrcado> items);
     List<ItemOrcadoResponseDTO> itemListToResponseDTO(List<ItemOrcado> items);
 }

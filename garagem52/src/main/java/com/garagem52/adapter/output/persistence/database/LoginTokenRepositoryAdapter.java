@@ -1,7 +1,7 @@
 package com.garagem52.adapter.output.persistence.database;
 
 import com.garagem52.adapter.output.persistence.entity.LoginTokenEntity;
-import com.garagem52.adapter.output.persistence.repository.JpaLoginTokenRepository;
+import com.garagem52.adapter.output.persistence.repository.MongoLoginTokenRepository;
 import com.garagem52.domain.model.LoginToken;
 import com.garagem52.ports.output.LoginTokenOutputPort;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +13,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LoginTokenRepositoryAdapter implements LoginTokenOutputPort {
 
-    private final JpaLoginTokenRepository repository;
+    private final MongoLoginTokenRepository repository;
 
     @Override
     public LoginToken salvar(LoginToken token) {
-        LoginTokenEntity entity = toEntity(token);
-        LoginTokenEntity saved  = repository.save(entity);
-        return toDomain(saved);
+        return toDomain(repository.save(toEntity(token)));
     }
 
     @Override
@@ -28,11 +26,9 @@ public class LoginTokenRepositoryAdapter implements LoginTokenOutputPort {
     }
 
     @Override
-    public void deletarPorUserId(Long userId) {
+    public void deletarPorUserId(String userId) {
         repository.deleteByUserId(userId);
     }
-
-    // ── mappers ──────────────────────────────────────────────
 
     private LoginTokenEntity toEntity(LoginToken t) {
         return LoginTokenEntity.builder()

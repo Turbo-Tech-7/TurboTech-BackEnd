@@ -20,45 +20,37 @@ public class FornecedorService implements FornecedorInputPort {
 
     @Override
     public FornecedorResponseDTO criar(CreateFornecedorRequestDTO request) {
-        Fornecedor fornecedor = Fornecedor.builder()
-                .nome(request.getNome())
-                .cep(request.getCep())
-                .telefone(request.getTelefone())
-                .build();
-        return mapper.toResponseDTO(fornecedorOutputPort.save(fornecedor));
+        Fornecedor f = Fornecedor.builder().nome(request.getNome()).cep(request.getCep()).telefone(request.getTelefone()).build();
+        return mapper.toResponseDTO(fornecedorOutputPort.save(f));
     }
 
     @Override
-    public FornecedorResponseDTO findById(Long id) {
-        Fornecedor fornecedor = fornecedorOutputPort.findById(id)
-                .orElseThrow(() -> new FornecedorNotFoundException(id));
-        return mapper.toResponseDTO(fornecedor);
+    public FornecedorResponseDTO findById(String id) {
+        return mapper.toResponseDTO(fornecedorOutputPort.findById(id)
+                .orElseThrow(() -> new FornecedorNotFoundException(id)));
     }
 
     @Override
     public List<FornecedorResponseDTO> findAll() {
-        return fornecedorOutputPort.findAll().stream()
-                .map(mapper::toResponseDTO).collect(Collectors.toList());
+        return fornecedorOutputPort.findAll().stream().map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<FornecedorResponseDTO> findByNome(String nome) {
-        return fornecedorOutputPort.findByNome(nome).stream()
-                .map(mapper::toResponseDTO).collect(Collectors.toList());
+        return fornecedorOutputPort.findByNome(nome).stream().map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    public FornecedorResponseDTO update(Long id, CreateFornecedorRequestDTO request) {
-        Fornecedor existing = fornecedorOutputPort.findById(id)
-                .orElseThrow(() -> new FornecedorNotFoundException(id));
-        if (request.getNome() != null) existing.setNome(request.getNome());
-        if (request.getCep() != null) existing.setCep(request.getCep());
-        if (request.getTelefone() != null) existing.setTelefone(request.getTelefone());
-        return mapper.toResponseDTO(fornecedorOutputPort.save(existing));
+    public FornecedorResponseDTO update(String id, CreateFornecedorRequestDTO request) {
+        Fornecedor f = fornecedorOutputPort.findById(id).orElseThrow(() -> new FornecedorNotFoundException(id));
+        if (request.getNome() != null)     f.setNome(request.getNome());
+        if (request.getCep() != null)      f.setCep(request.getCep());
+        if (request.getTelefone() != null) f.setTelefone(request.getTelefone());
+        return mapper.toResponseDTO(fornecedorOutputPort.save(f));
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(String id) {
         fornecedorOutputPort.findById(id).orElseThrow(() -> new FornecedorNotFoundException(id));
         fornecedorOutputPort.deleteById(id);
     }

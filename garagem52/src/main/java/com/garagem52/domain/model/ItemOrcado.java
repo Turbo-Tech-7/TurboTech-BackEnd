@@ -6,10 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class ItemOrcado {
-    private Long id;
-    private Long orcamentoId;
-    private Long pecaId;
-    private String nomePeca;
+    private String pecaId;      // referência por ObjectId
+    private String nomePeca;    // desnormalizado
     private String fornecedor;
     private Double valor;
     private Integer quantidade;

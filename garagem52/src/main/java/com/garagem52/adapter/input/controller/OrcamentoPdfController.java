@@ -21,20 +21,18 @@ public class OrcamentoPdfController implements OrcamentoPdfControllerSwagger {
 
     @Override
     @GetMapping("/{id}/pdf")
-    public ResponseEntity<InputStreamResource> gerarPdf(@PathVariable Long id) {
+    public ResponseEntity<InputStreamResource> gerarPdf(@PathVariable String id) {
         byte[] pdfBytes = orcamentoPdfInputPort.gerarPdf(id);
-        String filename = "orcamento-" + String.format("%04d", id) + ".pdf";
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"orcamento-" + id + ".pdf\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(pdfBytes)));
     }
 
     @Override
     @PostMapping("/{id}/pdf/email")
-    public ResponseEntity<MessageResponse> enviarPdfPorEmail(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> enviarPdfPorEmail(@PathVariable String id) {
         orcamentoPdfInputPort.enviarPdfPorEmail(id);
-        return ResponseEntity.ok(new MessageResponse(
-                "Orçamento #" + String.format("%04d", id) + " enviado com sucesso para o e-mail do cliente."));
+        return ResponseEntity.ok(new MessageResponse("Orçamento " + id + " enviado com sucesso para o e-mail do cliente."));
     }
 }

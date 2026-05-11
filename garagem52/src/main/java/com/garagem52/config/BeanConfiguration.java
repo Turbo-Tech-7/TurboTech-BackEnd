@@ -20,8 +20,7 @@ public class BeanConfiguration {
             JwtService jwtService,
             LoginTokenOutputPort loginTokenOutputPort,
             JavaMailSender mailSender) {
-        return new UserService(userOutputPort, passwordEncoder, jwtService,
-                               loginTokenOutputPort, mailSender);
+        return new UserService(userOutputPort, passwordEncoder, jwtService, loginTokenOutputPort, mailSender);
     }
 
     @Bean
@@ -42,30 +41,22 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public PecaService pecaService(
-            PecaOutputPort pecaOutputPort,
-            PecaPersistenceMapper pecaPersistenceMapper) {
+    public PecaService pecaService(PecaOutputPort pecaOutputPort, PecaPersistenceMapper pecaPersistenceMapper) {
         return new PecaService(pecaOutputPort, pecaPersistenceMapper);
     }
 
     @Bean
-    public FornecedorService fornecedorService(
-            FornecedorOutputPort fornecedorOutputPort,
-            FornecedorPersistenceMapper mapper) {
+    public FornecedorService fornecedorService(FornecedorOutputPort fornecedorOutputPort, FornecedorPersistenceMapper mapper) {
         return new FornecedorService(fornecedorOutputPort, mapper);
     }
 
     @Bean
-    public ServicoService servicoService(
-            ServicoOutputPort servicoOutputPort,
-            ServicoMapper mapper) {
+    public ServicoService servicoService(ServicoOutputPort servicoOutputPort, ServicoMapper mapper) {
         return new ServicoService(servicoOutputPort, mapper);
     }
 
     @Bean
-    public OrcamentoService orcamentoService(
-            OrcamentoOutputPort orcamentoOutputPort,
-            OrcamentoMapper mapper) {
+    public OrcamentoService orcamentoService(OrcamentoOutputPort orcamentoOutputPort, OrcamentoMapper mapper) {
         return new OrcamentoService(orcamentoOutputPort, mapper);
     }
 
@@ -80,5 +71,10 @@ public class BeanConfiguration {
             OrcamentoPdfService orcamentoPdfService,
             JavaMailSender mailSender) {
         return new OrcamentoPdfApplicationService(orcamentoInputPort, orcamentoPdfService, mailSender);
+    }
+
+    @Bean
+    public DashboardService dashboardService(DashboardOutputPort dashboardOutputPort) {
+        return new DashboardService(dashboardOutputPort);
     }
 }

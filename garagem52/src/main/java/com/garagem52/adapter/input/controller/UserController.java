@@ -10,14 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * HEXAGONAL — input ADAPTER (Controller)
- * Adapter HTTP de entrada para operações CRUD de usuários.
- * Todos os endpoints são PROTEGIDOS — requerem:
- *   Authorization: Bearer <token_obtido_no_login>
- * O JwtAuthFilter (config/) valida o token antes deste controller ser chamado.
- * Este controller delega tudo ao UserInputPort (porta de entrada do domínio).
- */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -31,24 +23,24 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable String id) {
         return ResponseEntity.ok(userInputPort.findById(id));
     }
 
     @GetMapping("/findByEmail")
-    ResponseEntity<UserResponseDTO> findByEmail(@RequestParam String email){
+    ResponseEntity<UserResponseDTO> findByEmail(@RequestParam String email) {
         return ResponseEntity.ok(userInputPort.findByEmail(email));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody UpdateUserRequestDTO request) {
         return ResponseEntity.ok(userInputPort.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable String id) {
         userInputPort.delete(id);
         return ResponseEntity.noContent().build();
     }

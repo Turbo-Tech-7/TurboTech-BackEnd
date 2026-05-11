@@ -1,34 +1,31 @@
 package com.garagem52.adapter.output.persistence.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "login_tokens")
+@Document(collection = "login_tokens")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginTokenEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Indexed
+    @Field("user_id")
+    private String userId;
 
-    @Column(nullable = false, unique = true)
+    @Indexed(unique = true)
     private String token;
 
-    @Column(name = "expires_at", nullable = false)
+    @Field("expires_at")
     private LocalDateTime expiresAt;
 
-    @Column(nullable = false)
     private boolean used;
 }

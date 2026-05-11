@@ -27,7 +27,7 @@ public class VeiculoController implements VeiculoControllerSwagger {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<VeiculoResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<VeiculoResponseDTO> findById(@PathVariable String id) {
         return ResponseEntity.ok(veiculoInputPort.findById(id));
     }
 
@@ -46,13 +46,13 @@ public class VeiculoController implements VeiculoControllerSwagger {
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<VeiculoResponseDTO> update(
-            @PathVariable Long id, @Valid @RequestBody UpdateVeiculoRequestDTO requestDTO) {
+            @PathVariable String id, @Valid @RequestBody UpdateVeiculoRequestDTO requestDTO) {
         return ResponseEntity.ok(veiculoInputPort.updateVeiculo(id, requestDTO));
     }
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable String id) {
         veiculoInputPort.delete(id);
         return ResponseEntity.noContent().build();
     }

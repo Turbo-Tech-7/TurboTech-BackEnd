@@ -12,7 +12,7 @@ import lombok.*;
 public class ItemOrcadoRequestDTO {
 
     @NotNull(message = "ID da peça é obrigatório")
-    private Long pecaId;
+    private String pecaId;
 
     private String fornecedor;
 

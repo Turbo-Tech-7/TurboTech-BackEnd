@@ -1,28 +1,26 @@
 package com.garagem52.adapter.output.persistence.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Entity
-@Table(name = "pecas")
+@Document(collection = "peca")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PecaEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "peca_id")
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
+    @Field("nome")
     private String nomePeca;
 
-    @Column(nullable = false)
+    @Field("descricao")
     private String descricaoPeca;
 
-    @Column(nullable = false)
+    @Field("valor")
     private Double precoPeca;
 }

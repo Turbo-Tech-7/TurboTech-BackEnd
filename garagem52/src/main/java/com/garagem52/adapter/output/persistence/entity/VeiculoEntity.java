@@ -1,36 +1,26 @@
 package com.garagem52.adapter.output.persistence.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "veiculo")
+@Document(collection = "veiculo")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class VeiculoEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
     private String marca;
-
-    @Column(nullable = false)
     private String modelo;
-
-    @Column(nullable = false)
     private Integer ano;
 
-    @Column(nullable = false)
+    @Indexed(unique = true)
     private String placa;
 
-    @Column(nullable = false)
     private String cor;
-
 }

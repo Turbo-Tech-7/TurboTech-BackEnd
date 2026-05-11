@@ -9,7 +9,6 @@ import com.garagem52.domain.exception.orcamento.OrcamentoNotFoundException;
 import com.garagem52.domain.exception.peca.PecaNotFoundException;
 import com.garagem52.domain.exception.servico.ServicoNotFoundException;
 import com.garagem52.domain.exception.user.EmailAlreadyExistsException;
-import com.garagem52.domain.exception.user.UserNotFoundException;
 import com.garagem52.domain.exception.veiculo.VeiculoNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,5 +1,4 @@
 package com.garagem52.domain.exception.user;
-
 /**
  * HEXAGONAL — DOMAIN EXCEPTION
  * Exceção de regra de negócio: usuário não encontrado.
@@ -8,11 +7,13 @@ package com.garagem52.domain.exception.user;
  */
 public class UserNotFoundException extends RuntimeException {
 
-    public UserNotFoundException(Long id) {
+    public UserNotFoundException(String id) {
         super("Usuário com ID " + id + " não encontrado.");
     }
 
     public UserNotFoundException(String email) {
         super("Usuário com e-mail '" + email + "' não encontrado.");
     }
+
 }
+

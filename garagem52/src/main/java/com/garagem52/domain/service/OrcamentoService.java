@@ -1,14 +1,9 @@
 package com.garagem52.domain.service;
 
-import com.garagem52.adapter.input.dto.request.CancelarOrcamentoRequestDTO;
-import com.garagem52.adapter.input.dto.request.CreateOrcamentoRequestDTO;
-import com.garagem52.adapter.input.dto.request.ItemOrcadoRequestDTO;
-import com.garagem52.adapter.input.dto.request.UpdateOrcamentoRequestDTO;
+import com.garagem52.adapter.input.dto.request.*;
 import com.garagem52.adapter.input.dto.response.OrcamentoResponseDTO;
 import com.garagem52.adapter.output.persistence.mapper.OrcamentoMapper;
-import com.garagem52.domain.exception.orcamento.MotivoCancelamentoObrigatorioException;
-import com.garagem52.domain.exception.orcamento.MotivoInvalidoException;
-import com.garagem52.domain.exception.orcamento.OrcamentoNotFoundException;
+import com.garagem52.domain.exception.orcamento.*;
 import com.garagem52.domain.model.ItemOrcado;
 import com.garagem52.domain.model.Orcamento;
 import com.garagem52.domain.utils.enums.OrcamentoStatus;
@@ -29,11 +24,9 @@ public class OrcamentoService implements OrcamentoInputPort {
     @Override
     public OrcamentoResponseDTO criar(CreateOrcamentoRequestDTO request) {
         List<ItemOrcado> itens = buildItens(request.getItens());
+        double totalPecas = itens.stream().mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
 
-        double totalPecas = itens.stream()
-                .mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
-
-        Orcamento orcamento = Orcamento.builder()
+        Orcamento o = Orcamento.builder()
                 .servicoId(request.getServicoId())
                 .veiculoId(request.getVeiculoId())
                 .valorMaoDeObra(request.getValorMaoDeObra())
@@ -47,101 +40,78 @@ public class OrcamentoService implements OrcamentoInputPort {
                 .itens(itens)
                 .build();
 
-        return mapper.toResponseDTO(orcamentoOutputPort.save(orcamento));
+        return mapper.toResponseDTO(orcamentoOutputPort.save(o));
     }
 
     @Override
-    public OrcamentoResponseDTO findById(Long id) {
-        return mapper.toResponseDTO(
-                orcamentoOutputPort.findById(id).orElseThrow(() -> new OrcamentoNotFoundException(id)));
+    public OrcamentoResponseDTO findById(String id) {
+        return mapper.toResponseDTO(orcamentoOutputPort.findById(id)
+                .orElseThrow(() -> new OrcamentoNotFoundException(id)));
     }
 
     @Override
     public List<OrcamentoResponseDTO> findAll() {
-        return orcamentoOutputPort.findAll().stream()
-                .map(mapper::toResponseDTO).collect(Collectors.toList());
+        return orcamentoOutputPort.findAll().stream().map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<OrcamentoResponseDTO> findByVeiculoId(Long veiculoId) {
-        return orcamentoOutputPort.findByVeiculoId(veiculoId).stream()
-                .map(mapper::toResponseDTO).collect(Collectors.toList());
+    public List<OrcamentoResponseDTO> findByVeiculoId(String veiculoId) {
+        return orcamentoOutputPort.findByVeiculoId(veiculoId).stream().map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<OrcamentoResponseDTO> findByStatus(String status) {
-        OrcamentoStatus enumStatus = OrcamentoStatus.valueOf(status.toUpperCase());
-        return orcamentoOutputPort.findByStatus(enumStatus).stream()
+        return orcamentoOutputPort.findByStatus(OrcamentoStatus.valueOf(status.toUpperCase())).stream()
                 .map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    public OrcamentoResponseDTO update(Long id, UpdateOrcamentoRequestDTO request) {
+    public OrcamentoResponseDTO update(String id, UpdateOrcamentoRequestDTO request) {
         Orcamento existing = orcamentoOutputPort.findById(id)
                 .orElseThrow(() -> new OrcamentoNotFoundException(id));
 
-        if (request.getValorMaoDeObra() != null) existing.setValorMaoDeObra(request.getValorMaoDeObra());
-        if (request.getDescricaoServico() != null) existing.setDescricaoServico(request.getDescricaoServico());
-        if (request.getNomeCliente() != null) existing.setNomeCliente(request.getNomeCliente());
-        if (request.getTelefoneCliente() != null) existing.setTelefoneCliente(request.getTelefoneCliente());
-        if (request.getEmailCliente() != null) existing.setEmailCliente(request.getEmailCliente());
-        if (request.getItens() != null && !request.getItens().isEmpty()) {
+        if (request.getValorMaoDeObra() != null)   existing.setValorMaoDeObra(request.getValorMaoDeObra());
+        if (request.getDescricaoServico() != null)  existing.setDescricaoServico(request.getDescricaoServico());
+        if (request.getNomeCliente() != null)        existing.setNomeCliente(request.getNomeCliente());
+        if (request.getTelefoneCliente() != null)    existing.setTelefoneCliente(request.getTelefoneCliente());
+        if (request.getEmailCliente() != null)       existing.setEmailCliente(request.getEmailCliente());
+        if (request.getItens() != null && !request.getItens().isEmpty())
             existing.setItens(buildItens(request.getItens()));
-        }
 
-        if (request.getStatus() != null) {
-            aplicarTransicaoStatus(existing, request);
-        }
+        if (request.getStatus() != null) aplicarTransicaoStatus(existing, request);
 
         double totalPecas = existing.getItens() == null ? 0 :
-                existing.getItens().stream()
-                        .mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
+                existing.getItens().stream().mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
         existing.setValorTotal(totalPecas + (existing.getValorMaoDeObra() != null ? existing.getValorMaoDeObra() : 0));
 
         return mapper.toResponseDTO(orcamentoOutputPort.save(existing));
     }
 
     @Override
-    public OrcamentoResponseDTO cancelar(Long id, CancelarOrcamentoRequestDTO request) {
-        if (request.getMotivo() == null) {
-            throw new MotivoCancelamentoObrigatorioException();
-        }
+    public OrcamentoResponseDTO cancelar(String id, CancelarOrcamentoRequestDTO request) {
+        if (request.getMotivo() == null) throw new MotivoCancelamentoObrigatorioException();
         Orcamento existing = orcamentoOutputPort.findById(id)
                 .orElseThrow(() -> new OrcamentoNotFoundException(id));
-
         existing.setStatus(OrcamentoStatus.CANCELADO);
         existing.setMotivoCancelamento(request.getMotivo());
-
         return mapper.toResponseDTO(orcamentoOutputPort.save(existing));
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(String id) {
         orcamentoOutputPort.findById(id).orElseThrow(() -> new OrcamentoNotFoundException(id));
         orcamentoOutputPort.deleteById(id);
     }
 
-    /**
-     * Regras de transição de status via PUT /orcamentos/{id}:
-     * - ABERTO / FINALIZADO: limpa o motivo (reabrir ou concluir não precisa de motivo)
-     * - CANCELADO: exige motivo
-     * - Motivo não pode ser enviado com status diferente de CANCELADO
-     */
     private void aplicarTransicaoStatus(Orcamento existing, UpdateOrcamentoRequestDTO request) {
         OrcamentoStatus novoStatus = request.getStatus();
-
         if (novoStatus == OrcamentoStatus.CANCELADO) {
-            if (request.getMotivoCancelamento() == null) {
-                throw new MotivoCancelamentoObrigatorioException();
-            }
+            if (request.getMotivoCancelamento() == null) throw new MotivoCancelamentoObrigatorioException();
             existing.setMotivoCancelamento(request.getMotivoCancelamento());
         } else {
-            if (request.getMotivoCancelamento() != null) {
-                throw new MotivoInvalidoException();
-            }
+            if (request.getMotivoCancelamento() != null) throw new MotivoInvalidoException();
             existing.setMotivoCancelamento(null);
         }
-
         existing.setStatus(novoStatus);
     }
 
@@ -151,7 +121,6 @@ public class OrcamentoService implements OrcamentoInputPort {
                 .fornecedor(dto.getFornecedor())
                 .valor(dto.getValor())
                 .quantidade(dto.getQuantidade())
-                .build()
-        ).collect(Collectors.toList());
+                .build()).collect(Collectors.toList());
     }
 }
