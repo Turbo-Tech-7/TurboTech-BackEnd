@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginToken {
-    private String id;
-    private String userId;
+    private String id;      // ObjectId do MongoDB
+    private String userId;  // referência por ObjectId
     private String token;
     private LocalDateTime expiresAt;
     private boolean used;

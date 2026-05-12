@@ -3,6 +3,7 @@ package com.garagem52.config;
 import com.garagem52.adapter.output.persistence.mapper.*;
 import com.garagem52.domain.service.*;
 import com.garagem52.ports.input.OrcamentoInputPort;
+import com.garagem52.ports.input.VeiculoInputPort;
 import com.garagem52.ports.output.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,14 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public ClienteVeiculoService clienteVeiculoService(
+            ClienteVeiculoOutputPort clienteVeiculoOutputPort,
+            VeiculoOutputPort veiculoOutputPort,
+            VeiculoInputPort veiculoInputPort) {
+        return new ClienteVeiculoService(clienteVeiculoOutputPort, veiculoOutputPort, veiculoInputPort);
+    }
+
+    @Bean
     public PasswordResetService passwordResetService(
             UserOutputPort userOutputPort,
             PasswordResetTokenOutputPort passwordResetTokenOutputPort,
@@ -56,8 +65,12 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public OrcamentoService orcamentoService(OrcamentoOutputPort orcamentoOutputPort, OrcamentoMapper mapper) {
-        return new OrcamentoService(orcamentoOutputPort, mapper);
+    public OrcamentoService orcamentoService(
+            OrcamentoOutputPort orcamentoOutputPort,
+            ServicoOutputPort servicoOutputPort,
+            ClienteVeiculoOutputPort clienteVeiculoOutputPort,
+            OrcamentoMapper mapper) {
+        return new OrcamentoService(orcamentoOutputPort, servicoOutputPort, clienteVeiculoOutputPort, mapper);
     }
 
     @Bean

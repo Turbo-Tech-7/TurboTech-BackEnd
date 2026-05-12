@@ -1,6 +1,7 @@
 package com.garagem52.domain.service;
 
 import com.garagem52.domain.exception.user.InvalidTokenException;
+import com.garagem52.domain.exception.user.UserNotFoundException;
 import com.garagem52.domain.model.PasswordResetToken;
 import com.garagem52.domain.model.User;
 import com.garagem52.ports.input.PasswordResetInputPort;

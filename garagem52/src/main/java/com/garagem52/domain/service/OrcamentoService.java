@@ -4,11 +4,15 @@ import com.garagem52.adapter.input.dto.request.*;
 import com.garagem52.adapter.input.dto.response.OrcamentoResponseDTO;
 import com.garagem52.adapter.output.persistence.mapper.OrcamentoMapper;
 import com.garagem52.domain.exception.orcamento.*;
+import com.garagem52.domain.model.ClienteVeiculo;
 import com.garagem52.domain.model.ItemOrcado;
 import com.garagem52.domain.model.Orcamento;
+import com.garagem52.domain.model.Servico;
 import com.garagem52.domain.utils.enums.OrcamentoStatus;
 import com.garagem52.ports.input.OrcamentoInputPort;
+import com.garagem52.ports.output.ClienteVeiculoOutputPort;
 import com.garagem52.ports.output.OrcamentoOutputPort;
+import com.garagem52.ports.output.ServicoOutputPort;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -19,24 +23,48 @@ import java.util.stream.Collectors;
 public class OrcamentoService implements OrcamentoInputPort {
 
     private final OrcamentoOutputPort orcamentoOutputPort;
+    private final ServicoOutputPort servicoOutputPort;
+    private final ClienteVeiculoOutputPort clienteVeiculoOutputPort;
     private final OrcamentoMapper mapper;
 
     @Override
     public OrcamentoResponseDTO criar(CreateOrcamentoRequestDTO request) {
+
+        ClienteVeiculo cv = clienteVeiculoOutputPort.findById(request.getClienteVeiculoId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Cadastro de cliente/veículo não encontrado: " + request.getClienteVeiculoId()));
+
+        if (cv.getVeiculoId() == null) {
+            throw new RuntimeException(
+                    "Veículo não vinculado ao cliente. Certifique-se de que a placa foi cadastrada.");
+        }
+
+        Servico servico = Servico.builder()
+                .veiculoId(cv.getVeiculoId())
+                .servicoOrcado("Orçamento")
+                .descricaoProblema(request.getDescricaoServico())
+                .dataEntrada(LocalDateTime.now())
+                .status("ABERTO")
+                .build();
+
+        Servico servicoSalvo = servicoOutputPort.save(servico);
+
         List<ItemOrcado> itens = buildItens(request.getItens());
-        double totalPecas = itens.stream().mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
+        double totalPecas = itens.stream()
+                .mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
 
         Orcamento o = Orcamento.builder()
-                .servicoId(request.getServicoId())
-                .veiculoId(request.getVeiculoId())
+                .servicoId(servicoSalvo.getId())
+                .veiculoId(cv.getVeiculoId())
+                .clienteVeiculoId(cv.getId())
                 .valorMaoDeObra(request.getValorMaoDeObra())
                 .valorTotal(totalPecas + request.getValorMaoDeObra())
                 .dataOrcamento(LocalDateTime.now())
                 .status(OrcamentoStatus.ABERTO)
-                .nomeCliente(request.getNomeCliente())
-                .telefoneCliente(request.getTelefoneCliente())
-                .emailCliente(request.getEmailCliente())
                 .descricaoServico(request.getDescricaoServico())
+                .nomeCliente(cv.getNomeCliente())
+                .telefoneCliente(cv.getTelefoneCliente())
+                .emailCliente(cv.getEmailCliente())
                 .itens(itens)
                 .build();
 
@@ -51,12 +79,14 @@ public class OrcamentoService implements OrcamentoInputPort {
 
     @Override
     public List<OrcamentoResponseDTO> findAll() {
-        return orcamentoOutputPort.findAll().stream().map(mapper::toResponseDTO).collect(Collectors.toList());
+        return orcamentoOutputPort.findAll().stream()
+                .map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<OrcamentoResponseDTO> findByVeiculoId(String veiculoId) {
-        return orcamentoOutputPort.findByVeiculoId(veiculoId).stream().map(mapper::toResponseDTO).collect(Collectors.toList());
+        return orcamentoOutputPort.findByVeiculoId(veiculoId).stream()
+                .map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -70,19 +100,21 @@ public class OrcamentoService implements OrcamentoInputPort {
         Orcamento existing = orcamentoOutputPort.findById(id)
                 .orElseThrow(() -> new OrcamentoNotFoundException(id));
 
-        if (request.getValorMaoDeObra() != null)   existing.setValorMaoDeObra(request.getValorMaoDeObra());
-        if (request.getDescricaoServico() != null)  existing.setDescricaoServico(request.getDescricaoServico());
-        if (request.getNomeCliente() != null)        existing.setNomeCliente(request.getNomeCliente());
-        if (request.getTelefoneCliente() != null)    existing.setTelefoneCliente(request.getTelefoneCliente());
-        if (request.getEmailCliente() != null)       existing.setEmailCliente(request.getEmailCliente());
+        if (request.getValorMaoDeObra() != null)existing.setValorMaoDeObra(request.getValorMaoDeObra());
+        if (request.getDescricaoServico() != null)existing.setDescricaoServico(request.getDescricaoServico());
+        if (request.getNomeCliente() != null)existing.setNomeCliente(request.getNomeCliente());
+        if (request.getTelefoneCliente() != null)existing.setTelefoneCliente(request.getTelefoneCliente());
+        if (request.getEmailCliente() != null)existing.setEmailCliente(request.getEmailCliente());
         if (request.getItens() != null && !request.getItens().isEmpty())
             existing.setItens(buildItens(request.getItens()));
-
-        if (request.getStatus() != null) aplicarTransicaoStatus(existing, request);
+        if (request.getStatus() != null)
+            aplicarTransicaoStatus(existing, request);
 
         double totalPecas = existing.getItens() == null ? 0 :
-                existing.getItens().stream().mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
-        existing.setValorTotal(totalPecas + (existing.getValorMaoDeObra() != null ? existing.getValorMaoDeObra() : 0));
+                existing.getItens().stream()
+                        .mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
+        existing.setValorTotal(totalPecas +
+                (existing.getValorMaoDeObra() != null ? existing.getValorMaoDeObra() : 0));
 
         return mapper.toResponseDTO(orcamentoOutputPort.save(existing));
     }
@@ -103,6 +135,7 @@ public class OrcamentoService implements OrcamentoInputPort {
         orcamentoOutputPort.deleteById(id);
     }
 
+
     private void aplicarTransicaoStatus(Orcamento existing, UpdateOrcamentoRequestDTO request) {
         OrcamentoStatus novoStatus = request.getStatus();
         if (novoStatus == OrcamentoStatus.CANCELADO) {
@@ -118,6 +151,7 @@ public class OrcamentoService implements OrcamentoInputPort {
     private List<ItemOrcado> buildItens(List<ItemOrcadoRequestDTO> dtos) {
         return dtos.stream().map(dto -> ItemOrcado.builder()
                 .pecaId(dto.getPecaId())
+                .nomePeca(dto.getNomePeca())
                 .fornecedor(dto.getFornecedor())
                 .valor(dto.getValor())
                 .quantidade(dto.getQuantidade())

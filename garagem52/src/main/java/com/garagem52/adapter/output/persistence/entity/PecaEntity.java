@@ -6,15 +6,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "peca")
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class PecaEntity {
     @Id
     private String id;
 
+    // Mantendo os nomes de campo que o PecaPersistenceMapper usa
     @Field("nome")
     private String nomePeca;
 

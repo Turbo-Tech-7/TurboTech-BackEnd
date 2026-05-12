@@ -1,22 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.11</version>
         <relativePath/>
     </parent>
-
     <groupId>com.garagem52</groupId>
     <artifactId>garagem52</artifactId>
     <version>1.0.6</version>
     <name>garagem52</name>
-    <description>CRUD de Usuário — Arquitetura Hexagonal + JWT + MongoDB</description>
-
+    <description>
+        CRUD de Usuário — Arquitetura Hexagonal + JWT + MongoDB
+    </description>
     <properties>
         <java.version>21</java.version>
         <jjwt.version>0.12.3</jjwt.version>
@@ -24,7 +20,6 @@
         <lombok.version>1.18.30</lombok.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -43,7 +38,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
@@ -100,7 +94,6 @@
             <type>pom</type>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -123,10 +116,18 @@
                     <source>21</source>
                     <target>21</target>
                     <compilerArgs>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
-                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                        <arg>
+                            -J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
+                        </arg>
+                        <arg>
+                            -J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED
+                        </arg>
+                        <arg>
+                            -J--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
+                        </arg>
+                        <arg>
+                            -J--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED
+                        </arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <path>

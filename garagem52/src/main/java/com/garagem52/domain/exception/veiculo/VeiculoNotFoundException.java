@@ -6,8 +6,4 @@ public class VeiculoNotFoundException extends  RuntimeException{
         super("Veículo com id " + id + " não encontrado");
     }
 
-    public VeiculoNotFoundException(String placa){
-        super("Veículo com a placa " + placa + " não encontrado");
-    }
-
 }

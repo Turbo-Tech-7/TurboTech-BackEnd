@@ -11,18 +11,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Era @Entity com @ManyToOne ServicoEntity e @ManyToOne VeiculoEntity.
- * No MongoDB: servicoId e veiculoId são Strings (ObjectId).
- * Era @OneToMany List<ItemOrcadoEntity>: agora embedded (array no documento).
- */
 @Document(collection = "orcamento")
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class OrcamentoEntity {
+
     @Id
     private String id;
 
@@ -33,6 +25,16 @@ public class OrcamentoEntity {
     @Indexed
     @Field("veiculo_id")
     private String veiculoId;
+
+    /**
+     * Referência ao registro de entrada do cliente (collection cliente_veiculo).
+     * Substitui os campos soltos nomeCliente/telefoneCliente/emailCliente
+     * que eram duplicados — agora lidos diretamente do ClienteVeiculo.
+     * Mantidos abaixo como fallback para orçamentos antigos ou criações manuais.
+     */
+    @Indexed
+    @Field("cliente_veiculo_id")
+    private String clienteVeiculoId;
 
     @Field("valor_mao_de_obra")
     private Double valorMaoDeObra;
@@ -50,6 +52,7 @@ public class OrcamentoEntity {
     @Field("motivo_cancelamento")
     private MotivoCancelamento motivoCancelamento;
 
+    // Mantidos como fallback / compatibilidade
     @Field("nome_cliente")
     private String nomeCliente;
 
@@ -62,6 +65,6 @@ public class OrcamentoEntity {
     @Field("descricao_servico")
     private String descricaoServico;
 
-    // Array embedded — substitui collection item_orcado + JOINs
+    // Array embedded — itens do orçamento
     private List<ItemOrcadoEntity> itens;
 }

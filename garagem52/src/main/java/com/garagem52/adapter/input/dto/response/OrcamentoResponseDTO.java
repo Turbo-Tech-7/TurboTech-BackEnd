@@ -12,6 +12,7 @@ public class OrcamentoResponseDTO {
     private String id;
     private String servicoId;
     private String veiculoId;
+    private String clienteVeiculoId;
     private Double valorMaoDeObra;
     private Double valorTotal;
     private LocalDateTime dataOrcamento;
@@ -20,9 +21,16 @@ public class OrcamentoResponseDTO {
     private MotivoCancelamento motivoCancelamento;
     private String motivoCancelamentoDescricao;
     private List<ItemOrcadoResponseDTO> itens;
+    private String descricaoServico;
+
+    // Dados do cliente — preenchidos do ClienteVeiculo quando disponível
     private String nomeCliente;
     private String telefoneCliente;
     private String emailCliente;
-    private String descricaoServico;
+
+    /** Dados completos do veículo (enriquecido) */
     private VeiculoResponseDTO veiculo;
+
+    /** Dados completos do cliente+veículo (enriquecido) */
+    private ClienteVeiculoResponseDTO clienteVeiculo;
 }

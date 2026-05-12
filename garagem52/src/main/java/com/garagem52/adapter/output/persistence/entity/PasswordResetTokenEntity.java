@@ -12,10 +12,7 @@ import java.time.LocalDateTime;
  * Era @ManyToOne UserEntity — agora userId é String (ObjectId).
  */
 @Document(collection = "password_reset_token")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class PasswordResetTokenEntity {
     @Id
     private String id;

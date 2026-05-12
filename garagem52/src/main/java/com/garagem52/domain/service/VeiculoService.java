@@ -4,6 +4,7 @@ import com.garagem52.adapter.input.dto.request.UpdateVeiculoRequestDTO;
 import com.garagem52.adapter.input.dto.response.VeiculoResponseDTO;
 import com.garagem52.adapter.output.persistence.mapper.VeiculoPersistenceMapper;
 import com.garagem52.domain.exception.veiculo.VeiculoNotFoundException;
+import com.garagem52.domain.exception.veiculo.VeiculoSearchByPlacaNotFoundException;
 import com.garagem52.domain.model.Veiculo;
 import com.garagem52.ports.input.VeiculoInputPort;
 import com.garagem52.ports.output.VeiculoOutputPort;
@@ -57,7 +58,7 @@ public class VeiculoService implements VeiculoInputPort {
     @Override
     public VeiculoResponseDTO findByPlaca(String placa) {
         return mapper.toResponseDTO(veiculoOutputPort.findByPlaca(placa)
-                .orElseThrow(() -> new VeiculoNotFoundException(placa)));
+                .orElseThrow(() -> new VeiculoSearchByPlacaNotFoundException(placa)));
     }
 
     @Override

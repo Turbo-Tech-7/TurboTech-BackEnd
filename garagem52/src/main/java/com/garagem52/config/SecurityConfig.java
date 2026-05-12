@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .requestMatchers("/fornecedores/**").authenticated()
                 .requestMatchers("/servicos/**").authenticated()
                 .requestMatchers("/orcamentos/**").authenticated()
+                .requestMatchers("/clientes-veiculos/**").authenticated()
                 .requestMatchers("/dashboard/**").authenticated()
                 .anyRequest().authenticated()
             )

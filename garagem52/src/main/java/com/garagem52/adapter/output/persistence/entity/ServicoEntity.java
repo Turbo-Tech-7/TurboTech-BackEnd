@@ -9,11 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.LocalDateTime;
 
 @Document(collection = "servico")
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class ServicoEntity {
     @Id
     private String id;
@@ -21,7 +17,6 @@ public class ServicoEntity {
     @Field("servico_orcado")
     private String servicoOrcado;
 
-    // Era @ManyToOne VeiculoEntity — agora referência por ObjectId
     @Indexed
     @Field("veiculo_id")
     private String veiculoId;

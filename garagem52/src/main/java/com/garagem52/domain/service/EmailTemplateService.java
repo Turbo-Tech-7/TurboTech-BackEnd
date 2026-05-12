@@ -141,7 +141,7 @@ public class EmailTemplateService {
         return wrap("Garagem52 — Código de Acesso", body);
     }
 
-    public static String orcamentoPdf(String nomeCliente, long orcamentoId,
+    public static String orcamentoPdf(String nomeCliente, String orcamentoId,
                                       String descricaoServico, String placa,
                                       String modelo, String valorTotal, String data) {
         String body = """

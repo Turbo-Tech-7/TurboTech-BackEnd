@@ -8,11 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * Era uma @Entity separada com @ManyToOne para Orcamento e Peca.
  * No MongoDB vira array embutido — sem collection própria.
  */
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class ItemOrcadoEntity {
     @Field("peca_id")
     private String pecaId;      // referência por ObjectId

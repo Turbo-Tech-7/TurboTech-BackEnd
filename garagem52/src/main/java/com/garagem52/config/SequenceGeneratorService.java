@@ -1,18 +1,23 @@
 package com.garagem52.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+
 import java.util.Objects;
+
 import static org.springframework.data.mongodb.core.FindAndModifyOptions.options;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+/**
+ * Gera IDs numéricos sequenciais (Long) para cada collection do MongoDB,
+ * replicando o comportamento do AUTO_INCREMENT do MySQL.
+ *
+ * Usa a collection "database_sequences" com um documento por entidade.
+ * A operação findAndModify é atômica — sem race conditions em concorrência.
+ */
 @Service
 @RequiredArgsConstructor
 public class SequenceGeneratorService {
@@ -29,10 +34,11 @@ public class SequenceGeneratorService {
         return Objects.requireNonNull(counter).getSeq();
     }
 
-    @Document(collection = "database_sequences")
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
+    // Documento interno de sequência
+    @org.springframework.data.mongodb.core.mapping.Document(collection = "database_sequences")
+    @lombok.Data
+    @lombok.NoArgsConstructor
+    @lombok.AllArgsConstructor
     public static class DatabaseSequence {
         @org.springframework.data.annotation.Id
         private String id;

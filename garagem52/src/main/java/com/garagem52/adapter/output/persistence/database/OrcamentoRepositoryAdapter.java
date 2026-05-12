@@ -1,6 +1,8 @@
 package com.garagem52.adapter.output.persistence.database;
 
+import com.garagem52.adapter.output.persistence.mapper.ClienteVeiculoMapper;
 import com.garagem52.adapter.output.persistence.mapper.OrcamentoMapper;
+import com.garagem52.adapter.output.persistence.repository.MongoClienteVeiculoRepository;
 import com.garagem52.adapter.output.persistence.repository.MongoOrcamentoRepository;
 import com.garagem52.adapter.output.persistence.repository.MongoVeiculoRepository;
 import com.garagem52.domain.model.Orcamento;
@@ -20,7 +22,9 @@ public class OrcamentoRepositoryAdapter implements OrcamentoOutputPort {
 
     private final MongoOrcamentoRepository repository;
     private final MongoVeiculoRepository veiculoRepository;
+    private final MongoClienteVeiculoRepository clienteVeiculoRepository;
     private final OrcamentoMapper mapper;
+    private final ClienteVeiculoMapper clienteVeiculoMapper;
 
     @Override
     public Orcamento save(Orcamento orcamento) {
@@ -56,13 +60,14 @@ public class OrcamentoRepositoryAdapter implements OrcamentoOutputPort {
     }
 
     /**
-     * Substitui o FetchType.LAZY do JPA — resolve o Veiculo via lookup
-     * no MongoDB e popula o campo transiente no modelo de domínio.
+     * Enriquece o domínio com dados de Veiculo e ClienteVeiculo via lookup.
+     * Substitui o FetchType.LAZY / @ManyToOne do JPA.
      */
-    private Orcamento enrich(Orcamento orcamento) {
-        if (orcamento.getVeiculoId() != null) {
-            veiculoRepository.findById(orcamento.getVeiculoId()).ifPresent(v ->
-                orcamento.setVeiculo(Veiculo.builder()
+    private Orcamento enrich(Orcamento o) {
+        // Lookup Veiculo
+        if (o.getVeiculoId() != null) {
+            veiculoRepository.findById(o.getVeiculoId()).ifPresent(v ->
+                o.setVeiculo(Veiculo.builder()
                         .id(v.getId())
                         .marca(v.getMarca())
                         .modelo(v.getModelo())
@@ -72,6 +77,18 @@ public class OrcamentoRepositoryAdapter implements OrcamentoOutputPort {
                         .build())
             );
         }
-        return orcamento;
+
+        // Lookup ClienteVeiculo — preenche também os campos legados do cliente
+        if (o.getClienteVeiculoId() != null) {
+            clienteVeiculoRepository.findById(o.getClienteVeiculoId()).ifPresent(cv -> {
+                o.setClienteVeiculo(clienteVeiculoMapper.toDomain(cv));
+                // Propaga para campos legados usados no PDF e e-mail
+                if (o.getNomeCliente() == null)     o.setNomeCliente(cv.getNomeCliente());
+                if (o.getTelefoneCliente() == null) o.setTelefoneCliente(cv.getTelefoneCliente());
+                if (o.getEmailCliente() == null)    o.setEmailCliente(cv.getEmailCliente());
+            });
+        }
+
+        return o;
     }
 }
