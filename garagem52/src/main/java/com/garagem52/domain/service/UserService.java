@@ -52,7 +52,7 @@ public class UserService implements UserInputPort {
     @Override
     public MessageResponse login(LoginRequestDTO request) {
         User user = userOutputPort.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserSearchByEmailNotFoundException(request.getEmail()));
+                .orElseThrow(() -> new UserNotFoundException(request.getEmail()));
 
         if (!passwordEncoder.matches(request.getSenha(), user.getSenha()))
             throw new BadCredentialsException("Credenciais inválidas.");
@@ -113,7 +113,7 @@ public class UserService implements UserInputPort {
     @Override
     public UserResponseDTO findByEmail(String email) {
         return toResponseDTO(userOutputPort.findByEmail(email)
-                .orElseThrow(() -> new UserSearchByEmailNotFoundException(email)));
+                .orElseThrow(() -> new UserNotFoundException(email)));
     }
 
     @Override

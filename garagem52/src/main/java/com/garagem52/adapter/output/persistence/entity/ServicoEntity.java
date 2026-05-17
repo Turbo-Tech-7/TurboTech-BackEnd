@@ -17,6 +17,7 @@ public class ServicoEntity {
     @Field("servico_orcado")
     private String servicoOrcado;
 
+    // Era @ManyToOne VeiculoEntity — agora referência por ObjectId
     @Indexed
     @Field("veiculo_id")
     private String veiculoId;

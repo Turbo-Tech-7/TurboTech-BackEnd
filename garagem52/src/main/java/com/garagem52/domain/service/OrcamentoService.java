@@ -30,6 +30,7 @@ public class OrcamentoService implements OrcamentoInputPort {
     @Override
     public OrcamentoResponseDTO criar(CreateOrcamentoRequestDTO request) {
 
+        // 1. Resolve ClienteVeiculo — obrigatório para derivar veiculoId e dados do cliente
         ClienteVeiculo cv = clienteVeiculoOutputPort.findById(request.getClienteVeiculoId())
                 .orElseThrow(() -> new RuntimeException(
                         "Cadastro de cliente/veículo não encontrado: " + request.getClienteVeiculoId()));
@@ -39,6 +40,7 @@ public class OrcamentoService implements OrcamentoInputPort {
                     "Veículo não vinculado ao cliente. Certifique-se de que a placa foi cadastrada.");
         }
 
+        // 2. Cria o Servico automaticamente — mecânico não informa servicoId manualmente
         Servico servico = Servico.builder()
                 .veiculoId(cv.getVeiculoId())
                 .servicoOrcado("Orçamento")
@@ -49,6 +51,7 @@ public class OrcamentoService implements OrcamentoInputPort {
 
         Servico servicoSalvo = servicoOutputPort.save(servico);
 
+        // 3. Monta e salva o Orçamento com os IDs resolvidos internamente
         List<ItemOrcado> itens = buildItens(request.getItens());
         double totalPecas = itens.stream()
                 .mapToDouble(i -> i.getValor() * i.getQuantidade()).sum();
@@ -62,6 +65,7 @@ public class OrcamentoService implements OrcamentoInputPort {
                 .dataOrcamento(LocalDateTime.now())
                 .status(OrcamentoStatus.ABERTO)
                 .descricaoServico(request.getDescricaoServico())
+                // Propaga dados do cliente para campos legados (PDF, e-mail)
                 .nomeCliente(cv.getNomeCliente())
                 .telefoneCliente(cv.getTelefoneCliente())
                 .emailCliente(cv.getEmailCliente())
@@ -100,11 +104,11 @@ public class OrcamentoService implements OrcamentoInputPort {
         Orcamento existing = orcamentoOutputPort.findById(id)
                 .orElseThrow(() -> new OrcamentoNotFoundException(id));
 
-        if (request.getValorMaoDeObra() != null)existing.setValorMaoDeObra(request.getValorMaoDeObra());
-        if (request.getDescricaoServico() != null)existing.setDescricaoServico(request.getDescricaoServico());
-        if (request.getNomeCliente() != null)existing.setNomeCliente(request.getNomeCliente());
-        if (request.getTelefoneCliente() != null)existing.setTelefoneCliente(request.getTelefoneCliente());
-        if (request.getEmailCliente() != null)existing.setEmailCliente(request.getEmailCliente());
+        if (request.getValorMaoDeObra() != null)   existing.setValorMaoDeObra(request.getValorMaoDeObra());
+        if (request.getDescricaoServico() != null)  existing.setDescricaoServico(request.getDescricaoServico());
+        if (request.getNomeCliente() != null)        existing.setNomeCliente(request.getNomeCliente());
+        if (request.getTelefoneCliente() != null)    existing.setTelefoneCliente(request.getTelefoneCliente());
+        if (request.getEmailCliente() != null)       existing.setEmailCliente(request.getEmailCliente());
         if (request.getItens() != null && !request.getItens().isEmpty())
             existing.setItens(buildItens(request.getItens()));
         if (request.getStatus() != null)
@@ -135,6 +139,7 @@ public class OrcamentoService implements OrcamentoInputPort {
         orcamentoOutputPort.deleteById(id);
     }
 
+    // ── helpers ───────────────────────────────────────────────────────────────
 
     private void aplicarTransicaoStatus(Orcamento existing, UpdateOrcamentoRequestDTO request) {
         OrcamentoStatus novoStatus = request.getStatus();
