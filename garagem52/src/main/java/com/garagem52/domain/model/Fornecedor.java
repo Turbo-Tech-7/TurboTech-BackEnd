@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class Fornecedor {
-    private Long id;
+    private String id;  // ObjectId do MongoDB
     private String nome;
     private String cep;
     private String telefone;

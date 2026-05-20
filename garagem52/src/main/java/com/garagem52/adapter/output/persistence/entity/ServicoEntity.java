@@ -1,36 +1,32 @@
 package com.garagem52.adapter.output.persistence.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "servico")
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Document(collection = "servico")
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class ServicoEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "servico_orcado")
+    @Field("servico_orcado")
     private String servicoOrcado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "veiculo_id", nullable = false)
-    private VeiculoEntity veiculo;
+    // Era @ManyToOne VeiculoEntity — agora referência por ObjectId
+    @Indexed
+    @Field("veiculo_id")
+    private String veiculoId;
 
-    @Column(name = "data_entrada")
+    @Field("data_entrada")
     private LocalDateTime dataEntrada;
 
-    @Column(name = "descricao_problema")
+    @Field("descricao_problema")
     private String descricaoProblema;
 
-    @Column(length = 45)
     private String status;
 }

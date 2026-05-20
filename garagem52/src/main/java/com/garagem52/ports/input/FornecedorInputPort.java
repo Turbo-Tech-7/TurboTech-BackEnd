@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface FornecedorInputPort {
     FornecedorResponseDTO criar(CreateFornecedorRequestDTO request);
-    FornecedorResponseDTO findById(Long id);
+    FornecedorResponseDTO findById(String id);
     List<FornecedorResponseDTO> findAll();
     List<FornecedorResponseDTO> findByNome(String nome);
-    FornecedorResponseDTO update(Long id, CreateFornecedorRequestDTO request);
-    void delete(Long id);
+    FornecedorResponseDTO update(String id, CreateFornecedorRequestDTO request);
+    void delete(String id);
 }

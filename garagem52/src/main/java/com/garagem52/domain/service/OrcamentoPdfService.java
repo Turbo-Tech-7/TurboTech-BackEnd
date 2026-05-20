@@ -79,8 +79,16 @@ public class OrcamentoPdfService {
                 .setBorder(Border.NO_BORDER);
 
         Cell left = new Cell().setBorder(Border.NO_BORDER).setPadding(0);
-        left.add(new Paragraph("Orçamento #" + String.format("%04d", o.getId()))
-                .setFont(bold).setFontSize(22).setFontColor(DARK));
+        String modeloVeiculo = "";
+
+        if (o.getVeiculo() != null) {
+            modeloVeiculo = o.getVeiculo().getModelo();
+        }
+
+        left.add(new Paragraph("Orçamento - " + modeloVeiculo)
+                .setFont(bold)
+                .setFontSize(22)
+                .setFontColor(DARK));
         String data = o.getDataOrcamento() != null
                 ? o.getDataOrcamento().format(DATE_FMT) : "—";
         left.add(new Paragraph(data)
@@ -109,16 +117,31 @@ public class OrcamentoPdfService {
     private void addClienteSection(Document doc, OrcamentoResponseDTO o,
                                    PdfFont bold, PdfFont regular) {
         doc.add(sectionTitle("Informações do Cliente", bold));
+
         Table t = cardTable();
-        VeiculoResponseDTO v = o.getVeiculo();
-        String placa  = v != null ? v.getPlaca() : "—";
-        String modelo = v != null
-                ? (v.getMarca() + " " + v.getModelo() + " " + (v.getAno() != null ? v.getAno() : "")).trim()
-                : "—";
-        addRow(t, "Placa do Veículo",  placa,                      bold, regular);
-        addRow(t, "Nome do Cliente",   nvl(o.getNomeCliente()),     bold, regular);
-        addRow(t, "Telefone",          nvl(o.getTelefoneCliente()), bold, regular);
-        addRow(t, "Modelo do Veículo", modelo,                      bold, regular);
+
+        String placa = "—";
+        String modelo = "—";
+
+        if (o.getVeiculo() != null) {
+            VeiculoResponseDTO v = o.getVeiculo();
+
+            placa = v.getPlaca() != null
+                    ? v.getPlaca()
+                    : "—";
+
+            modelo = (
+                    (v.getMarca() != null ? v.getMarca() : "") + " " +
+                            (v.getModelo() != null ? v.getModelo() : "") + " " +
+                            (v.getAno() != null ? v.getAno() : "")
+            ).trim();
+        }
+
+        addRow(t, "Placa do Veículo", placa, bold, regular);
+        addRow(t, "Nome do Cliente", nvl(o.getNomeCliente()), bold, regular);
+        addRow(t, "Telefone", nvl(o.getTelefoneCliente()), bold, regular);
+        addRow(t, "Modelo do Veículo", modelo, bold, regular);
+
         doc.add(t);
     }
 

@@ -27,108 +27,55 @@ public class VeiculoService implements VeiculoInputPort {
 
     @Override
     public VeiculoResponseDTO criarVeiculo(String placa) {
-
         placa = placa.trim().toUpperCase();
-
-        if (!placaValida(placa)) {
-            throw new RuntimeException("Formato de placa inválido");
-        }
+        if (!placaValida(placa)) throw new RuntimeException("Formato de placa inválido");
 
         Optional<Veiculo> cache = veiculoOutputPort.findByPlaca(placa);
-
-        if (cache.isPresent()) {
-            System.out.println("Veículo encontrado no banco (cache)");
-
-            return mapper.toResponseDTO(cache.get());
-        }
-
-        System.out.println("Consultando API externa...");
+        if (cache.isPresent()) return mapper.toResponseDTO(cache.get());
 
         Veiculo veiculoApi = webClient.get()
                 .uri("https://wdapi2.com.br/consulta/{placa}/{token}", placa, token)
-                .retrieve()
-                .bodyToMono(Veiculo.class)
-                .block();
+                .retrieve().bodyToMono(Veiculo.class).block();
 
-        if (veiculoApi == null) {
-            throw new RuntimeException("Veículo não encontrado na API");
-        }
-
+        if (veiculoApi == null) throw new RuntimeException("Veículo não encontrado na API");
         veiculoApi.setPlaca(placa);
 
-        Veiculo salvo = veiculoOutputPort.save(veiculoApi);
-
-        return mapper.toResponseDTO(salvo);
+        return mapper.toResponseDTO(veiculoOutputPort.save(veiculoApi));
     }
 
     @Override
-    public VeiculoResponseDTO findById(Long id) {
-        Veiculo veiculo = veiculoOutputPort.findById(id)
-                .orElseThrow(() -> new VeiculoNotFoundException(id));
-        return mapper.toResponseDTO(veiculo);
+    public VeiculoResponseDTO findById(String id) {
+        return mapper.toResponseDTO(veiculoOutputPort.findById(id)
+                .orElseThrow(() -> new VeiculoNotFoundException(id)));
     }
 
     @Override
     public List<VeiculoResponseDTO> findAll() {
-        return veiculoOutputPort.findAll()
-                .stream()
-                .map(mapper::toResponseDTO)
-                .collect(Collectors.toList());
+        return veiculoOutputPort.findAll().stream().map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
     public VeiculoResponseDTO findByPlaca(String placa) {
-        Veiculo veiculo = veiculoOutputPort.findByPlaca(placa)
-                .orElseThrow(() -> new VeiculoNotFoundException(placa));
-        return mapper.toResponseDTO(veiculo);
+        return mapper.toResponseDTO(veiculoOutputPort.findByPlaca(placa)
+                .orElseThrow(() -> new VeiculoNotFoundException(placa)));
     }
 
     @Override
-    public VeiculoResponseDTO updateVeiculo(Long id, UpdateVeiculoRequestDTO requestDTO) {
-
-        Veiculo veiculoExistente = veiculoOutputPort.findById(id)
-                .orElseThrow(() -> new VeiculoNotFoundException(id));
-
-        if (requestDTO.getMarca() != null) {
-            veiculoExistente.setMarca(requestDTO.getMarca());
-        }
-
-        if (requestDTO.getModelo() != null) {
-            veiculoExistente.setModelo(requestDTO.getModelo());
-        }
-
-        if (requestDTO.getCor() != null) {
-            veiculoExistente.setCor(requestDTO.getCor());
-        }
-
-        Veiculo veiculoAtualizado = veiculoOutputPort.save(veiculoExistente);
-
-        return mapper.toResponseDTO(veiculoAtualizado);
+    public VeiculoResponseDTO updateVeiculo(String id, UpdateVeiculoRequestDTO requestDTO) {
+        Veiculo v = veiculoOutputPort.findById(id).orElseThrow(() -> new VeiculoNotFoundException(id));
+        if (requestDTO.getMarca() != null)  v.setMarca(requestDTO.getMarca());
+        if (requestDTO.getModelo() != null) v.setModelo(requestDTO.getModelo());
+        if (requestDTO.getCor() != null)    v.setCor(requestDTO.getCor());
+        return mapper.toResponseDTO(veiculoOutputPort.save(v));
     }
 
     @Override
-    public void delete(Long id) {
-        veiculoOutputPort.findById(id)
-                .orElseThrow(() -> new VeiculoNotFoundException(id));
+    public void delete(String id) {
+        veiculoOutputPort.findById(id).orElseThrow(() -> new VeiculoNotFoundException(id));
         veiculoOutputPort.deleteById(id);
     }
 
-    private VeiculoResponseDTO toResponseDTO(Veiculo veiculo){
-        return VeiculoResponseDTO.builder()
-                .id(veiculo.getId())
-                .marca(veiculo.getMarca())
-                .modelo(veiculo.getModelo())
-                .ano(veiculo.getAno())
-                .placa(veiculo.getPlaca())
-                .cor(veiculo.getCor())
-                .build();
-    }
-
     private boolean placaValida(String placa) {
-
-        String regexAntiga = "^[A-Z]{3}[0-9]{4}$";
-        String regexMercosul = "^[A-Z]{3}[0-9][A-Z][0-9]{2}$";
-
-        return placa.matches(regexAntiga) || placa.matches(regexMercosul);
+        return placa.matches("^[A-Z]{3}[0-9]{4}$") || placa.matches("^[A-Z]{3}[0-9][A-Z][0-9]{2}$");
     }
 }

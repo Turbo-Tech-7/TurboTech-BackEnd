@@ -21,45 +21,41 @@ public class ServicoService implements ServicoInputPort {
 
     @Override
     public ServicoResponseDTO criar(CreateServicoRequestDTO request) {
-        Servico servico = Servico.builder()
+        Servico s = Servico.builder()
                 .servicoOrcado(request.getServicoOrcado())
                 .veiculoId(request.getVeiculoId())
                 .dataEntrada(LocalDateTime.now())
                 .descricaoProblema(request.getDescricaoProblema())
                 .status("ABERTO")
                 .build();
-        return mapper.toResponseDTO(servicoOutputPort.save(servico));
+        return mapper.toResponseDTO(servicoOutputPort.save(s));
     }
 
     @Override
-    public ServicoResponseDTO findById(Long id) {
-        Servico servico = servicoOutputPort.findById(id)
-                .orElseThrow(() -> new ServicoNotFoundException(id));
-        return mapper.toResponseDTO(servico);
+    public ServicoResponseDTO findById(String id) {
+        return mapper.toResponseDTO(servicoOutputPort.findById(id)
+                .orElseThrow(() -> new ServicoNotFoundException(id)));
     }
 
     @Override
     public List<ServicoResponseDTO> findAll() {
-        return servicoOutputPort.findAll().stream()
-                .map(mapper::toResponseDTO).collect(Collectors.toList());
+        return servicoOutputPort.findAll().stream().map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<ServicoResponseDTO> findByVeiculoId(Long veiculoId) {
-        return servicoOutputPort.findByVeiculoId(veiculoId).stream()
-                .map(mapper::toResponseDTO).collect(Collectors.toList());
+    public List<ServicoResponseDTO> findByVeiculoId(String veiculoId) {
+        return servicoOutputPort.findByVeiculoId(veiculoId).stream().map(mapper::toResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    public ServicoResponseDTO updateStatus(Long id, String status) {
-        Servico servico = servicoOutputPort.findById(id)
-                .orElseThrow(() -> new ServicoNotFoundException(id));
-        servico.setStatus(status.toUpperCase());
-        return mapper.toResponseDTO(servicoOutputPort.save(servico));
+    public ServicoResponseDTO updateStatus(String id, String status) {
+        Servico s = servicoOutputPort.findById(id).orElseThrow(() -> new ServicoNotFoundException(id));
+        s.setStatus(status.toUpperCase());
+        return mapper.toResponseDTO(servicoOutputPort.save(s));
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(String id) {
         servicoOutputPort.findById(id).orElseThrow(() -> new ServicoNotFoundException(id));
         servicoOutputPort.deleteById(id);
     }

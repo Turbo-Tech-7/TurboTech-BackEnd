@@ -31,18 +31,18 @@ public interface ServicoControllerSwagger {
     ResponseEntity<ServicoResponseDTO> criar(@Valid @RequestBody CreateServicoRequestDTO request);
 
     @Operation(summary = "Buscar serviço por ID")
-    ResponseEntity<ServicoResponseDTO> findById(@PathVariable Long id);
+    ResponseEntity<ServicoResponseDTO> findById(@PathVariable String id);
 
     @Operation(summary = "Listar todos os serviços")
     ResponseEntity<List<ServicoResponseDTO>> findAll();
 
     @Operation(summary = "Buscar serviços por veículo")
-    ResponseEntity<List<ServicoResponseDTO>> findByVeiculoId(@RequestParam Long veiculoId);
+    ResponseEntity<List<ServicoResponseDTO>> findByVeiculoId(@RequestParam String veiculoId);
 
     @Operation(summary = "Atualizar status do serviço (ex: ABERTO, EM_ANDAMENTO, CONCLUIDO)")
-    ResponseEntity<ServicoResponseDTO> updateStatus(@PathVariable Long id, @RequestParam String status);
+    ResponseEntity<ServicoResponseDTO> updateStatus(@PathVariable String id, @RequestParam String status);
 
     @Operation(summary = "Deletar serviço")
     @ApiResponse(responseCode = "204", description = "Deletado com sucesso")
-    ResponseEntity<Void> delete(@PathVariable Long id);
+    ResponseEntity<Void> delete(@PathVariable String id);
 }

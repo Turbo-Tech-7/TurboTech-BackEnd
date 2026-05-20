@@ -37,7 +37,7 @@ public interface VeiculoControllerSwagger {
             @ApiResponse(responseCode = "200", description = "Veículo encontrado"),
             @ApiResponse(responseCode = "404", description = "Veículo não encontrado")
     })
-    ResponseEntity<VeiculoResponseDTO> findById(@PathVariable Long id);
+    ResponseEntity<VeiculoResponseDTO> findById(@PathVariable String id);
 
     @Operation(summary = "Buscar veículo por placa")
     ResponseEntity<VeiculoResponseDTO> findByPlaca(@RequestParam String placa);
@@ -46,9 +46,9 @@ public interface VeiculoControllerSwagger {
     ResponseEntity<List<VeiculoResponseDTO>> findAll();
 
     @Operation(summary = "Atualizar dados do veículo (marca, modelo, cor)")
-    ResponseEntity<VeiculoResponseDTO> update(@PathVariable Long id, @Valid @RequestBody UpdateVeiculoRequestDTO requestDTO);
+    ResponseEntity<VeiculoResponseDTO> update(@PathVariable String id, @Valid @RequestBody UpdateVeiculoRequestDTO requestDTO);
 
     @Operation(summary = "Deletar veículo")
     @ApiResponse(responseCode = "204", description = "Deletado com sucesso")
-    ResponseEntity<Void> delete(@PathVariable Long id);
+    ResponseEntity<Void> delete(@PathVariable String id);
 }

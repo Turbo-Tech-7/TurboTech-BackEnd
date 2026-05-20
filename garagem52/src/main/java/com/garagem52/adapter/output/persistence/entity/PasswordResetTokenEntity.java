@@ -1,30 +1,30 @@
 package com.garagem52.adapter.output.persistence.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "password_reset_token")
-@AllArgsConstructor
-@Data
-@NoArgsConstructor
+/**
+ * Era @ManyToOne UserEntity — agora userId é String (ObjectId).
+ */
+@Document(collection = "password_reset_token")
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class PasswordResetTokenEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
+    @Indexed(unique = true)
     private String token;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Field("user_id")
+    private String userId;
 
+    @Field("expires_at")
     private LocalDateTime expiresAt;
-    private boolean used;
 
+    private boolean used;
 }

@@ -1,27 +1,16 @@
 package com.garagem52.adapter.output.persistence.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "fornecedor")
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Document(collection = "fornecedor")
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class FornecedorEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false, length = 100)
     private String nome;
-
-    @Column(length = 45)
     private String cep;
-
-    @Column(length = 45)
     private String telefone;
 }

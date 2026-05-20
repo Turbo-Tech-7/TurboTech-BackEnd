@@ -36,7 +36,7 @@ public interface FornecedorControllerSwagger {
                     content = @Content(schema = @Schema(implementation = FornecedorResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Fornecedor não encontrado")
     })
-    ResponseEntity<FornecedorResponseDTO> findById(@Parameter(description = "ID do fornecedor") @PathVariable Long id);
+    ResponseEntity<FornecedorResponseDTO> findById(@Parameter(description = "ID do fornecedor") @PathVariable String id);
 
     @Operation(summary = "Listar todos os fornecedores")
     ResponseEntity<List<FornecedorResponseDTO>> findAll();
@@ -49,12 +49,12 @@ public interface FornecedorControllerSwagger {
             @ApiResponse(responseCode = "200", description = "Fornecedor atualizado"),
             @ApiResponse(responseCode = "404", description = "Fornecedor não encontrado")
     })
-    ResponseEntity<FornecedorResponseDTO> update(@PathVariable Long id, @Valid @RequestBody CreateFornecedorRequestDTO request);
+    ResponseEntity<FornecedorResponseDTO> update(@PathVariable String id, @Valid @RequestBody CreateFornecedorRequestDTO request);
 
     @Operation(summary = "Deletar fornecedor")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Deletado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Fornecedor não encontrado")
     })
-    ResponseEntity<Void> delete(@PathVariable Long id);
+    ResponseEntity<Void> delete(@PathVariable String id);
 }

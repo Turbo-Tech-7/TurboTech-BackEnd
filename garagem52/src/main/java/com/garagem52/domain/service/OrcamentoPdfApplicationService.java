@@ -23,13 +23,13 @@ public class OrcamentoPdfApplicationService implements OrcamentoPdfInputPort {
             DateTimeFormatter.ofPattern("dd/MM/yyyy", new Locale("pt", "BR"));
 
     @Override
-    public byte[] gerarPdf(Long orcamentoId) {
+    public byte[] gerarPdf(String orcamentoId) {
         OrcamentoResponseDTO orcamento = orcamentoInputPort.findById(orcamentoId);
         return pdfService.gerar(orcamento);
     }
 
     @Override
-    public void enviarPdfPorEmail(Long orcamentoId) {
+    public void enviarPdfPorEmail(String orcamentoId) {
         OrcamentoResponseDTO orcamento = orcamentoInputPort.findById(orcamentoId);
 
         if (orcamento.getNomeCliente() == null || orcamento.getNomeCliente().isBlank()) {
@@ -40,7 +40,7 @@ public class OrcamentoPdfApplicationService implements OrcamentoPdfInputPort {
 
         byte[] pdfBytes = pdfService.gerar(orcamento);
 
-        String nomeArquivo = "orcamento-" + String.format("%04d", orcamento.getId()) + ".pdf";
+        String nomeArquivo = "orcamento-" + orcamento.getId() + ".pdf";
         String data  = orcamento.getDataOrcamento() != null
                 ? orcamento.getDataOrcamento().format(DATE_FMT) : "—";
         String modelo = resolverModelo(orcamento);
@@ -52,7 +52,7 @@ public class OrcamentoPdfApplicationService implements OrcamentoPdfInputPort {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(destino);
             helper.setFrom("garagem.g.52@gmail.com", "Garagem52");
-            helper.setSubject("Garagem52 — Orçamento #" + String.format("%04d", orcamento.getId()));
+            helper.setSubject("Garagem52 — Orçamento #" + orcamento.getId());
             helper.setText(
                     EmailTemplateService.orcamentoPdf(
                             orcamento.getNomeCliente(),
@@ -81,7 +81,7 @@ public class OrcamentoPdfApplicationService implements OrcamentoPdfInputPort {
         }
         throw new RuntimeException(
                 "E-mail do cliente não informado no orçamento #" + orcamento.getId() +
-                ". Preencha o campo 'emailCliente' ao criar ou atualizar o orçamento.");
+                        ". Preencha o campo 'emailCliente' ao criar ou atualizar o orçamento.");
     }
 
     private String resolverModelo(OrcamentoResponseDTO orcamento) {

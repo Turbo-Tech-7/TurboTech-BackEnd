@@ -44,10 +44,7 @@ public class PasswordResetService implements PasswordResetInputPort {
             helper.setTo(email);
             helper.setFrom("garagem.g.52@gmail.com", "Garagem52");
             helper.setSubject("Garagem52 — Redefinição de Senha");
-            helper.setText(
-                    EmailTemplateService.passwordReset(user.getName(), resetToken.getToken()),
-                    true // isHtml = true
-            );
+            helper.setText(EmailTemplateService.passwordReset(user.getName(), resetToken.getToken()), true);
             mailSender.send(message);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao enviar e-mail de recuperação: " + e.getMessage(), e);
@@ -59,9 +56,8 @@ public class PasswordResetService implements PasswordResetInputPort {
         PasswordResetToken resetToken = passwordResetTokenOutputPort.buscarPorToken(token)
                 .orElseThrow(() -> new InvalidTokenException("Token inválido"));
 
-        if (resetToken.isExpired() || resetToken.isUsed()){
+        if (resetToken.isExpired() || resetToken.isUsed())
             throw new InvalidTokenException("Token expirado ou já utilizado");
-        }
 
         User user = userOutputPort.findById(resetToken.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));

@@ -7,11 +7,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface VeiculoPersistenceMapper {
-
     VeiculoEntity toEntity(Veiculo veiculo);
-
-    Veiculo toDomain(VeiculoEntity veiculoEntity);
-
+    Veiculo toDomain(VeiculoEntity entity);
     VeiculoResponseDTO toResponseDTO(Veiculo veiculo);
-
 }

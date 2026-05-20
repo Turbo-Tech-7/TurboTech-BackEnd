@@ -6,8 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class Peca {
-
-    private Long id;
+    private String id;  // ObjectId do MongoDB
     private String nome;
     private String descricao;
     private Double valor;

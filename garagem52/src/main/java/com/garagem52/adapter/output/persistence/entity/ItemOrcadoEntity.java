@@ -1,34 +1,22 @@
 package com.garagem52.adapter.output.persistence.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Entity
-@Table(name = "item_orcado")
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+/**
+ * Embedded document dentro de OrcamentoEntity.
+ * Era uma @Entity separada com @ManyToOne para Orcamento e Peca.
+ * No MongoDB vira array embutido — sem collection própria.
+ */
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class ItemOrcadoEntity {
+    @Field("peca_id")
+    private String pecaId;      // referência por ObjectId
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Field("nome_peca")
+    private String nomePeca;    // desnormalizado para evitar lookup
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orcamento_id", nullable = false)
-    private OrcamentoEntity orcamento;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "peca_id", nullable = false)
-    private PecaEntity peca;
-
-    @Column
     private Double valor;
-
     private Integer quantidade;
-
-    @Column
     private String fornecedor;
 }

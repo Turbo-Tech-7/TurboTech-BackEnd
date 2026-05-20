@@ -19,9 +19,9 @@ public interface PecaPersistenceMapper {
     @Mapping(source = "precoPeca",   target = "valor")
     Peca toDomain(PecaEntity entity);
 
-    @Mapping(source = "id",       target = "idPeca")
-    @Mapping(source = "nome",     target = "nomePeca")
-    @Mapping(source = "descricao", target = "descricaoPeca")
-    @Mapping(source = "valor",    target = "precoPeca")
+    @Mapping(source = "id",          target = "idPeca")
+    @Mapping(source = "nome",        target = "nomePeca")
+    @Mapping(source = "descricao",   target = "descricaoPeca")
+    @Mapping(source = "valor",       target = "precoPeca")
     PecaResponseDTO toResponseDTO(Peca peca);
 }

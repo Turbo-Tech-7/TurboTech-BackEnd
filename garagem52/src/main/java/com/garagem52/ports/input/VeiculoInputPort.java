@@ -6,16 +6,10 @@ import com.garagem52.adapter.input.dto.response.VeiculoResponseDTO;
 import java.util.List;
 
 public interface VeiculoInputPort {
-
-    VeiculoResponseDTO criarVeiculo(String Placa);
-
-    VeiculoResponseDTO findById(Long id);
-
+    VeiculoResponseDTO criarVeiculo(String placa);
+    VeiculoResponseDTO findById(String id);
     List<VeiculoResponseDTO> findAll();
-
     VeiculoResponseDTO findByPlaca(String placa);
-
-    VeiculoResponseDTO updateVeiculo(Long id, UpdateVeiculoRequestDTO requestDTO);
-
-    void delete(Long id);
+    VeiculoResponseDTO updateVeiculo(String id, UpdateVeiculoRequestDTO requestDTO);
+    void delete(String id);
 }

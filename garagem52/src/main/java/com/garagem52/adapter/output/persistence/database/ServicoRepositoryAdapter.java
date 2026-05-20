@@ -1,10 +1,7 @@
 package com.garagem52.adapter.output.persistence.database;
 
-import com.garagem52.adapter.output.persistence.entity.VeiculoEntity;
 import com.garagem52.adapter.output.persistence.mapper.ServicoMapper;
-import com.garagem52.adapter.output.persistence.repository.JpaServicoRepository;
-import com.garagem52.adapter.output.persistence.repository.JpaVeiculoRepository;
-import com.garagem52.domain.exception.veiculo.VeiculoNotFoundException;
+import com.garagem52.adapter.output.persistence.repository.MongoServicoRepository;
 import com.garagem52.domain.model.Servico;
 import com.garagem52.ports.output.ServicoOutputPort;
 import lombok.RequiredArgsConstructor;
@@ -18,41 +15,38 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ServicoRepositoryAdapter implements ServicoOutputPort {
 
-    private final JpaServicoRepository jpaRepository;
-    private final JpaVeiculoRepository jpaVeiculoRepository;
+    private final MongoServicoRepository repository;
     private final ServicoMapper mapper;
 
     @Override
     public Servico save(Servico servico) {
-        VeiculoEntity veiculo = jpaVeiculoRepository.findById(servico.getVeiculoId())
-                .orElseThrow(() -> new VeiculoNotFoundException(servico.getVeiculoId()));
-        return mapper.toDomain(jpaRepository.save(mapper.toEntity(servico, veiculo)));
+        return mapper.toDomain(repository.save(mapper.toEntity(servico)));
     }
 
     @Override
-    public Optional<Servico> findById(Long id) {
-        return jpaRepository.findById(id).map(mapper::toDomain);
+    public Optional<Servico> findById(String id) {
+        return repository.findById(id).map(mapper::toDomain);
     }
 
     @Override
     public List<Servico> findAll() {
-        return jpaRepository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
+        return repository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
     }
 
     @Override
-    public List<Servico> findByVeiculoId(Long veiculoId) {
-        return jpaRepository.findByVeiculoId(veiculoId).stream()
+    public List<Servico> findByVeiculoId(String veiculoId) {
+        return repository.findByVeiculoId(veiculoId).stream()
                 .map(mapper::toDomain).collect(Collectors.toList());
     }
 
     @Override
     public List<Servico> findByStatus(String status) {
-        return jpaRepository.findByStatus(status).stream()
+        return repository.findByStatus(status).stream()
                 .map(mapper::toDomain).collect(Collectors.toList());
     }
 
     @Override
-    public void deleteById(Long id) {
-        jpaRepository.deleteById(id);
+    public void deleteById(String id) {
+        repository.deleteById(id);
     }
 }

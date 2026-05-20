@@ -37,7 +37,7 @@ public interface OrcamentoPdfControllerSwagger {
     })
     @GetMapping(value = "/{id}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     ResponseEntity<InputStreamResource> gerarPdf(
-            @Parameter(description = "ID do orçamento", required = true) @PathVariable Long id);
+            @Parameter(description = "ID do orçamento", required = true) @PathVariable String id);
 
     @Operation(
             summary = "Enviar PDF do orçamento por e-mail",
@@ -62,5 +62,5 @@ public interface OrcamentoPdfControllerSwagger {
     })
     @PostMapping("/{id}/pdf/email")
     ResponseEntity<MessageResponse> enviarPdfPorEmail(
-            @Parameter(description = "ID do orçamento", required = true) @PathVariable Long id);
+            @Parameter(description = "ID do orçamento", required = true) @PathVariable String id);
 }
