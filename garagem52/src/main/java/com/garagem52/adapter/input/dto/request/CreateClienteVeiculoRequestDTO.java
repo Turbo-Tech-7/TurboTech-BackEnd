@@ -19,7 +19,8 @@ public class CreateClienteVeiculoRequestDTO {
     @NotBlank(message = "Telefone é obrigatório")
     private String telefoneCliente;
 
-    @NotBlank(message = "Modelo do veículo é obrigatório")
+    // Preenchido automaticamente pelo retorno da API de veículos (marca + modelo)
+    // Não é obrigatório no request — serve apenas como fallback se a API não retornar dados
     private String modeloVeiculo;
 
     private String emailCliente; // opcional no wireframe

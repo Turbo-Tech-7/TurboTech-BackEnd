@@ -148,10 +148,10 @@ public class EmailTemplateService {
             <span class="badge">🚗 Orçamento</span>
             <h2>Seu orçamento está pronto!</h2>
             <p>Olá, <strong>%s</strong>!</p>
-            <p>O orçamento <strong>#%04d</strong> foi elaborado pela equipe da <strong>Garagem52</strong>
+            <p>O orçamento <strong>#%s</strong> foi elaborado pela equipe da <strong>Garagem52</strong>
                e está anexado a este e-mail em formato PDF. Confira o resumo abaixo:</p>
             <table class="info-table">
-              <tr><td>Nº do Orçamento</td><td>#%04d</td></tr>
+              <tr><td>Nº do Orçamento</td><td>#%s</td></tr>
               <tr><td>Data</td><td>%s</td></tr>
               <tr><td>Serviço</td><td>%s</td></tr>
               <tr><td>Veículo</td><td>%s</td></tr>
@@ -170,7 +170,7 @@ public class EmailTemplateService {
                 data, descricaoServico, modelo, placa, valorTotal
         );
 
-        return wrap("Garagem52 — Orçamento #" + String.format("%04d", orcamentoId), body);
+        return wrap("Garagem52 — Orçamento #" + orcamentoId, body);
     }
 
     private static String formatCode(String code) {
