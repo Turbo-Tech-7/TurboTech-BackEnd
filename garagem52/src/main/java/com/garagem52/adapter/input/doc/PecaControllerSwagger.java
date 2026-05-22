@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,7 +18,7 @@ public interface PecaControllerSwagger {
 
     @Operation(summary = "Buscar peças por nome")
     @ApiResponse(responseCode = "200", description = "Peças encontradas")
-    ResponseEntity<List<PecaResponseDTO>> findByNome(@RequestParam String nomePeca);
+    ResponseEntity<Page<PecaResponseDTO>> findByNome(@RequestParam String nomePeca, Pageable pageable);
 
     @Operation(summary = "Buscar peças por valor máximo")
     @ApiResponse(responseCode = "200", description = "Peças encontradas")
