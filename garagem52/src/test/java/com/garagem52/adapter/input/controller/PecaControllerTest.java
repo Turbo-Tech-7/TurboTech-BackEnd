@@ -9,6 +9,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -35,9 +37,10 @@ class PecaControllerTest {
 
     @Test
     void deveBuscarPorNome() throws Exception {
+        var pageResult = new PageImpl<>(List.of(new PecaResponseDTO()), PageRequest.of(0, 10), 1);
 
-        Mockito.when(pecaInputPort.findByNome("Filtro"))
-                .thenReturn(List.of(new PecaResponseDTO()));
+        Mockito.when(pecaInputPort.findByNome(Mockito.eq("Filtro"), Mockito.any()))
+                .thenReturn(pageResult);
 
         mockMvc.perform(get("/pecas/buscar-nome")
                         .param("nomePeca", "Filtro"))
@@ -46,7 +49,6 @@ class PecaControllerTest {
 
     @Test
     void deveBuscarPorValor() throws Exception {
-
         Mockito.when(pecaInputPort.findByValor(100.0))
                 .thenReturn(List.of(new PecaResponseDTO()));
 

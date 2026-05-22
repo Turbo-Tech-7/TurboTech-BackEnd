@@ -12,6 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,32 +39,36 @@ class PecaServiceTest {
 
     private Peca peca;
     private PecaResponseDTO responseDTO;
+    private Pageable pageable;
 
     @BeforeEach
     void setUp() {
         peca = Peca.builder().nome("Filtro de Óleo").descricao("Filtro").valor(45.0).build();
         responseDTO = PecaResponseDTO.builder().nomePeca("Filtro de Óleo").precoPeca(45.0).build();
+        pageable = PageRequest.of(0, 10);
     }
 
     @Test
-    @DisplayName("findByNome: retorna lista quando peças encontradas")
-    void findByNome_deveRetornarLista_quandoPecasExistem() {
-        when(pecaOutputPort.findByNome("Filtro")).thenReturn(List.of(peca));
+    @DisplayName("findByNome: retorna página quando peças encontradas")
+    void findByNome_deveRetornarPagina_quandoPecasExistem() {
+        Page<Peca> pecaPage = new PageImpl<>(List.of(peca), pageable, 1);
+        when(pecaOutputPort.findByNome("Filtro", pageable)).thenReturn(pecaPage);
         when(mapper.toResponseDTO(peca)).thenReturn(responseDTO);
 
-        List<PecaResponseDTO> result = pecaService.findByNome("Filtro");
+        Page<PecaResponseDTO> result = pecaService.findByNome("Filtro", pageable);
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getNomePeca()).isEqualTo("Filtro de Óleo");
-        verify(pecaOutputPort).findByNome("Filtro");
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).getNomePeca()).isEqualTo("Filtro de Óleo");
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        verify(pecaOutputPort).findByNome("Filtro", pageable);
     }
 
     @Test
-    @DisplayName("findByNome: lança PecaNotFoundException quando lista vazia")
-    void findByNome_deveLancarException_quandoListaVazia() {
-        when(pecaOutputPort.findByNome("Inexistente")).thenReturn(Collections.emptyList());
+    @DisplayName("findByNome: lança PecaNotFoundException quando página vazia")
+    void findByNome_deveLancarException_quandoPaginaVazia() {
+        when(pecaOutputPort.findByNome("Inexistente", pageable)).thenReturn(Page.empty(pageable));
 
-        assertThatThrownBy(() -> pecaService.findByNome("Inexistente"))
+        assertThatThrownBy(() -> pecaService.findByNome("Inexistente", pageable))
                 .isInstanceOf(PecaNotFoundException.class)
                 .hasMessageContaining("Nenhuma peça encontrada com esse nome");
     }

@@ -8,6 +8,8 @@
     import com.garagem52.ports.input.PecaInputPort;
     import com.garagem52.ports.output.PecaOutputPort;
     import lombok.RequiredArgsConstructor;
+    import org.springframework.data.domain.Page;
+    import org.springframework.data.domain.Pageable;
 
     import java.util.List;
     import java.util.stream.Collectors;
@@ -19,10 +21,10 @@ public class PecaService implements PecaInputPort {
         private final PecaPersistenceMapper mapper;
 
     @Override
-    public List<PecaResponseDTO> findByNome(String nomePeca) {
-        List<Peca> pecas = pecaOutputPort.findByNome(nomePeca);
+    public Page<PecaResponseDTO> findByNome(String nomePeca, Pageable pageable) {
+        Page<Peca> pecas = pecaOutputPort.findByNome(nomePeca, pageable);
         if (pecas.isEmpty()) throw new PecaNotFoundException("Nenhuma peça encontrada com esse nome");
-        return pecas.stream().map(mapper::toResponseDTO).collect(Collectors.toList());
+        return pecas.map(mapper::toResponseDTO);
     }
 
     @Override

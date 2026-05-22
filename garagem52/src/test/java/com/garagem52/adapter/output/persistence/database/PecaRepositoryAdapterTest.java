@@ -9,6 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -46,16 +49,18 @@ class PecaRepositoryAdapterTest {
                 .nome("Filtro de Óleo")
                 .build();
 
-        when(mongoTemplate.find(any(Query.class), eq(PecaEntity.class)))
-                .thenReturn(List.of(entity));
+        Pageable pageable = PageRequest.of(0, 10);
 
+        when(mongoTemplate.count(any(Query.class), eq(PecaEntity.class))).thenReturn(1L);
+        when(mongoTemplate.find(any(Query.class), eq(PecaEntity.class))).thenReturn(List.of(entity));
         when(mapper.toDomain(entity)).thenReturn(domain);
 
-        List<Peca> result = adapter.findByNome("Filtro");
+        Page<Peca> result = adapter.findByNome("Filtro", pageable);
 
-        assertEquals(1, result.size());
-        assertEquals("Filtro de Óleo", result.get(0).getNome());
-
+        assertEquals(1, result.getContent().size());
+        assertEquals(1L, result.getTotalElements());
+        assertEquals("Filtro de Óleo", result.getContent().get(0).getNome());
+        verify(mongoTemplate).count(any(Query.class), eq(PecaEntity.class));
         verify(mongoTemplate).find(any(Query.class), eq(PecaEntity.class));
     }
 
@@ -73,9 +78,7 @@ class PecaRepositoryAdapterTest {
                 .valor(100.0)
                 .build();
 
-        when(repository.findByPrecoPecaLessThanEqual(100.0))
-                .thenReturn(List.of(entity));
-
+        when(repository.findByPrecoPecaLessThanEqual(100.0)).thenReturn(List.of(entity));
         when(mapper.toDomain(entity)).thenReturn(domain);
 
         List<Peca> result = adapter.findByPreco(100.0);
@@ -96,9 +99,7 @@ class PecaRepositoryAdapterTest {
                 .nome("Filtro")
                 .build();
 
-        when(repository.findById("1"))
-                .thenReturn(Optional.of(entity));
-
+        when(repository.findById("1")).thenReturn(Optional.of(entity));
         when(mapper.toDomain(entity)).thenReturn(domain);
 
         Optional<Peca> result = adapter.findById("1");

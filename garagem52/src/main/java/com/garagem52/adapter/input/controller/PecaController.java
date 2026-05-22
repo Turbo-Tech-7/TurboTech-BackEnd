@@ -4,6 +4,8 @@ import com.garagem52.adapter.input.doc.PecaControllerSwagger;
 import com.garagem52.adapter.input.dto.response.PecaResponseDTO;
 import com.garagem52.ports.input.PecaInputPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,8 +23,8 @@ public class PecaController implements PecaControllerSwagger {
 
     @Override
     @GetMapping("/buscar-nome")
-    public ResponseEntity<List<PecaResponseDTO>> findByNome(@RequestParam String nomePeca) {
-        return ResponseEntity.ok(pecaInputPort.findByNome(nomePeca));
+    public ResponseEntity<Page<PecaResponseDTO>> findByNome(@RequestParam String nomePeca, Pageable pageable) {
+        return ResponseEntity.ok(pecaInputPort.findByNome(nomePeca, pageable));
     }
 
     @Override

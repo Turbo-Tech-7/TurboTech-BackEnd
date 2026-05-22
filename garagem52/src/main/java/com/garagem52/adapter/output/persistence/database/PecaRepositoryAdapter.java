@@ -6,6 +6,9 @@ import com.garagem52.adapter.output.persistence.repository.MongoPecaRepository;
 import com.garagem52.domain.model.Peca;
 import com.garagem52.ports.output.PecaOutputPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,17 +28,23 @@ public class PecaRepositoryAdapter implements PecaOutputPort {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public List<Peca> findByNome(String nomePeca) {
+    public Page<Peca> findByNome(String nomePeca, Pageable pageable) {
         Pattern pattern = Pattern.compile(".*" + Pattern.quote(nomePeca) + ".*",
                 Pattern.CASE_INSENSITIVE);
 
         Query query = new Query();
         query.addCriteria(Criteria.where("nomePeca").regex(pattern));
 
-        return mongoTemplate.find(query, PecaEntity.class)
+        long total = mongoTemplate.count(query, PecaEntity.class);
+
+        query.with(pageable);
+
+        List<Peca> pecas = mongoTemplate.find(query, PecaEntity.class)
                 .stream()
                 .map(mapper::toDomain)
-                .collect(Collectors.toList());
+                .toList();
+
+        return new PageImpl<>(pecas, pageable, total);
     }
 
     @Override
