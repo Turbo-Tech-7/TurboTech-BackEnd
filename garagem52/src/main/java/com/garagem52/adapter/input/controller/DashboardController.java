@@ -1,13 +1,13 @@
 package com.garagem52.adapter.input.controller;
 
-import com.garagem52.adapter.input.dto.response.DashboardResponseDTO;
-import com.garagem52.adapter.input.dto.response.RelatorioFinanceiroResponseDTO;
+import com.garagem52.adapter.input.dto.response.*;
 import com.garagem52.ports.input.DashboardInputPort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -45,5 +45,44 @@ public class DashboardController {
             @Parameter(description = "Período: DIA, MES ou ANO")
             @RequestParam(defaultValue = "MES") String filtro) {
         return ResponseEntity.ok(dashboardInputPort.buscarRelatorioFinanceiro(filtro.toUpperCase()));
+    }
+
+    @GetMapping("/orcamentos")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Operation(
+            summary = "Relatório de Orçamentos",
+            description = "Retorna totais e distribuição de status/motivos para a aba Orçamentos do Dashboard."
+    )
+    public ResponseEntity<RelatorioOrcamentoDTO> getRelatorioOrcamentos(
+            @Parameter(description = "Período: 'mes' (padrão) ou 'ano'")
+            @RequestParam(defaultValue = "mes") String filtro) {
+
+        return ResponseEntity.ok(dashboardInputPort.getRelatorioOrcamentos(filtro));
+    }
+
+    @GetMapping("/pecas")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Operation(
+            summary = "Relatório de Peças",
+            description = "Retorna gastos com peças, fornecedores e evolução mensal para a aba Peças do Dashboard."
+    )
+    public ResponseEntity<RelatorioPecasDTO> getRelatorioPecas(
+            @Parameter(description = "Período: 'mes' (padrão) ou 'ano'")
+            @RequestParam(defaultValue = "mes") String filtro) {
+
+        return ResponseEntity.ok(dashboardInputPort.getRelatorioPecas(filtro));
+    }
+
+    @GetMapping("/clientes")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Operation(
+            summary = "Relatório de Clientes",
+            description = "Retorna análise de clientes, faturamento e novos clientes para a aba Clientes do Dashboard."
+    )
+    public ResponseEntity<RelatorioClientesDTO> getRelatorioClientes(
+            @Parameter(description = "Período: 'mes' (padrão) ou 'ano'")
+            @RequestParam(defaultValue = "mes") String filtro) {
+
+        return ResponseEntity.ok(dashboardInputPort.getRelatorioClientes(filtro));
     }
 }

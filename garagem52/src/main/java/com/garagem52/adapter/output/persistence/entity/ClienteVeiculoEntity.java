@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDateTime;
+
 /**
  * Collection "cliente_veiculo".
  * Salva os dados do cliente junto com a placa/modelo do veículo.
@@ -38,4 +40,7 @@ public class ClienteVeiculoEntity {
     // Referência ao VeiculoEntity — preenchido após lookup pela placa
     @Field("veiculo_id")
     private String veiculoId;
+
+    @Field("data_inclusao")
+    private LocalDateTime dataInclusao;
 }
