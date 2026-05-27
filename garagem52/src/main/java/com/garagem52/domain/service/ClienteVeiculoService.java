@@ -10,6 +10,7 @@ import com.garagem52.ports.output.ClienteVeiculoOutputPort;
 import com.garagem52.ports.output.VeiculoOutputPort;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,11 +34,11 @@ public class ClienteVeiculoService implements ClienteVeiculoInputPort {
                 .telefoneCliente(request.getTelefoneCliente())
                 .emailCliente(request.getEmailCliente())
                 .placaVeiculo(placa)
-                // Modelo: usa o retornado pela API/banco; fallback para o digitado pelo mecânico
                 .modeloVeiculo(veiculoDTO.getModelo() != null
                         ? veiculoDTO.getMarca() + " " + veiculoDTO.getModelo()
                         : request.getModeloVeiculo())
-                .veiculoId(veiculoDTO.getId()) // resolvido — nunca null aqui
+                .veiculoId(veiculoDTO.getId())
+                .dataInclusao(LocalDateTime.now())
                 .build();
 
         return toResponse(outputPort.save(cv), veiculoDTO);

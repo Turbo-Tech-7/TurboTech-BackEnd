@@ -3,6 +3,8 @@ package com.garagem52.domain.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * Representa a entrada de um cliente na oficina.
  * Criado pelo mecânico ao receber o veículo — associa o cliente ao veículo
@@ -20,4 +22,5 @@ public class ClienteVeiculo {
     private String modeloVeiculo;
     private String placaVeiculo;
     private String veiculoId;
+    private LocalDateTime dataInclusao;
 }
