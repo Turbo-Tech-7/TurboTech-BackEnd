@@ -10,4 +10,5 @@ public class Peca {
     private String nome;
     private String descricao;
     private Double valor;
+    private String fornecedor;
 }

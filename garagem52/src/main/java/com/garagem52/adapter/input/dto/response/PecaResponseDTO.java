@@ -8,4 +8,5 @@ public class PecaResponseDTO {
     private String nomePeca;
     private String descricaoPeca;
     private Double precoPeca;
+    private String fornecedor;
 }

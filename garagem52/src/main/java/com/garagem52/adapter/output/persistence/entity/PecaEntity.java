@@ -20,4 +20,7 @@ public class PecaEntity {
 
     @Field("valor")
     private Double precoPeca;
+
+    @Field("fornecedor")
+    private String fornecedor;
 }
