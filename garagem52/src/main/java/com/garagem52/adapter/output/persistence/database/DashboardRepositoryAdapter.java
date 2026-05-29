@@ -95,7 +95,6 @@ public class DashboardRepositoryAdapter implements DashboardOutputPort {
         return RelatorioFinanceiroResponseDTO.builder()
                 .faturamentoTotal(faturamentoTotal)
                 .totalCancelado(totalCancelado)
-                .faturamentoLiquido(faturamentoTotal - totalCancelado)
                 .faturamentoVsCancelamento(buildFaturamentoVsCancelamento(noPeriodo, filtro))
                 .evolucaoFaturamento(evolucao)
                 .build();

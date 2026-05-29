@@ -23,4 +23,7 @@ public class PecaEntity {
 
     @Field("fornecedor")
     private String fornecedor;
+
+    @Field("unidade_venda")
+    private String unidadeVenda;
 }

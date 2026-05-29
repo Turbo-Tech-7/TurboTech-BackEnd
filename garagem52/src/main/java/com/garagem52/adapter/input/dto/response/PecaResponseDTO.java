@@ -9,4 +9,5 @@ public class PecaResponseDTO {
     private String descricaoPeca;
     private Double precoPeca;
     private String fornecedor;
+    private String unidadeVenda;
 }

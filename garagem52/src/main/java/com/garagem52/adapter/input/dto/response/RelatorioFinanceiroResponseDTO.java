@@ -15,7 +15,6 @@ public class RelatorioFinanceiroResponseDTO {
 
     private Double faturamentoTotal;
     private Double totalCancelado;
-    private Double faturamentoLiquido;
 
     private List<FaturamentoVsCancelamentoDTO> faturamentoVsCancelamento;
     private List<EvolucaoFaturamentoDTO> evolucaoFaturamento;

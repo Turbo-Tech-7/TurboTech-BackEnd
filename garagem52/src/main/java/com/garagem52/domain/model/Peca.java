@@ -11,4 +11,5 @@ public class Peca {
     private String descricao;
     private Double valor;
     private String fornecedor;
+    private String unidadeVenda;
 }
