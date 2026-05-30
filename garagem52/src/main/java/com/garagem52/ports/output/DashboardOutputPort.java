@@ -15,6 +15,7 @@ public interface DashboardOutputPort {
     List<Document> groupOrcamentosByStatus(LocalDateTime from, LocalDateTime to);
     List<Document> groupOrcamentosByMotivoCancelamento(LocalDateTime from, LocalDateTime to);
     double sumValorItensPorPeriodo(LocalDateTime from, LocalDateTime to);
+    double sumMaoDeObraFinalizados(LocalDateTime from, LocalDateTime to);
     List<Document> groupItensByFornecedor(LocalDateTime from, LocalDateTime to);
     long countFornecedoresDistintos(LocalDateTime from, LocalDateTime to);
     List<Document> evolucaoMensalGastoPecas(LocalDateTime from, LocalDateTime to);

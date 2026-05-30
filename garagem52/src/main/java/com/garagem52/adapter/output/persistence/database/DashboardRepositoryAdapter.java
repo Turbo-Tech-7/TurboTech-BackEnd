@@ -77,6 +77,7 @@ public class DashboardRepositoryAdapter implements DashboardOutputPort {
         List<OrcamentoEntity> noPeriodo = filtrar(orcamentoRepository.findAll(), filtro);
 
         double faturamentoTotal = somarFinalizados(noPeriodo);
+        double faturamentoLiquido = somarMaoDeObraFinalizados(noPeriodo);
 
         double totalCancelado = noPeriodo.stream()
                 .filter(o -> OrcamentoStatus.CANCELADO.equals(o.getStatus()))
@@ -95,6 +96,7 @@ public class DashboardRepositoryAdapter implements DashboardOutputPort {
         return RelatorioFinanceiroResponseDTO.builder()
                 .faturamentoTotal(faturamentoTotal)
                 .totalCancelado(totalCancelado)
+                .faturamentoLiquido(faturamentoLiquido)
                 .faturamentoVsCancelamento(buildFaturamentoVsCancelamento(noPeriodo, filtro))
                 .evolucaoFaturamento(evolucao)
                 .build();
@@ -128,6 +130,12 @@ public class DashboardRepositoryAdapter implements DashboardOutputPort {
         return orcamentos.stream()
                 .filter(o -> OrcamentoStatus.FINALIZADO.equals(o.getStatus()))
                 .mapToDouble(o -> o.getValorTotal() != null ? o.getValorTotal() : 0.0).sum();
+    }
+
+    private double somarMaoDeObraFinalizados(List<OrcamentoEntity> orcamentos) {
+        return orcamentos.stream()
+                .filter(o -> OrcamentoStatus.FINALIZADO.equals(o.getStatus()))
+                .mapToDouble(o -> o.getValorMaoDeObra() != null ? o.getValorMaoDeObra() : 0.0).sum();
     }
 
     private List<FaturamentoPorPeriodoDTO> buildEvolucao(List<OrcamentoEntity> orcamentos, String filtro) {
@@ -181,6 +189,17 @@ public class DashboardRepositoryAdapter implements DashboardOutputPort {
     }
 
     // ── Orçamentos ─────────────────────────────────────────────────────────
+
+    @Override
+    public double sumMaoDeObraFinalizados(LocalDateTime from, LocalDateTime to) {
+        return orcamentoRepository.findAll().stream()
+                .filter(o -> OrcamentoStatus.FINALIZADO.equals(o.getStatus())
+                        && o.getDataOrcamento() != null
+                        && !o.getDataOrcamento().isBefore(from)
+                        && !o.getDataOrcamento().isAfter(to))
+                .mapToDouble(o -> o.getValorMaoDeObra() != null ? o.getValorMaoDeObra() : 0.0)
+                .sum();
+    }
 
     @Override
     public long countTotalOrcamentos(LocalDateTime from, LocalDateTime to) {
