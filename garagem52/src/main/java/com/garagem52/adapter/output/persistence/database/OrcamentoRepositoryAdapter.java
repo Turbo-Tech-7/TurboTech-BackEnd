@@ -55,6 +55,12 @@ public class OrcamentoRepositoryAdapter implements OrcamentoOutputPort {
     }
 
     @Override
+    public List<Orcamento> findByServicoId(String servicoId) {
+        return repository.findByServicoId(servicoId).stream()
+                .map(e -> enrich(mapper.toDomain(e))).collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteById(String id) {
         repository.deleteById(id);
     }

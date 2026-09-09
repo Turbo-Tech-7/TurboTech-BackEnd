@@ -11,5 +11,6 @@ public interface OrcamentoOutputPort {
     List<Orcamento> findAll();
     List<Orcamento> findByVeiculoId(String veiculoId);
     List<Orcamento> findByStatus(OrcamentoStatus status);
+    List<Orcamento> findByServicoId(String servicoId);
     void deleteById(String id);
 }

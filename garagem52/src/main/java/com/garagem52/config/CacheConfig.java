@@ -18,7 +18,7 @@ public class CacheConfig {
 
         RedisCacheConfiguration config =
                 RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofDays(30));
+                        .entryTtl(Duration.ofMinutes(30));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(config)

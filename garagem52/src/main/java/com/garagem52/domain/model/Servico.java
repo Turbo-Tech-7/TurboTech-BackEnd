@@ -1,5 +1,6 @@
 package com.garagem52.domain.model;
 
+import com.garagem52.domain.utils.enums.ServicoStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,5 +14,5 @@ public class Servico {
     private String veiculoId;   // referência por ObjectId
     private LocalDateTime dataEntrada;
     private String descricaoProblema;
-    private String status;
+    private ServicoStatus status;
 }

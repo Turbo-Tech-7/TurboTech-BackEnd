@@ -9,6 +9,7 @@ import com.garagem52.domain.model.ItemOrcado;
 import com.garagem52.domain.model.Orcamento;
 import com.garagem52.domain.model.Servico;
 import com.garagem52.domain.utils.enums.OrcamentoStatus;
+import com.garagem52.domain.utils.enums.ServicoStatus;
 import com.garagem52.ports.input.OrcamentoInputPort;
 import com.garagem52.ports.output.ClienteVeiculoOutputPort;
 import com.garagem52.ports.output.OrcamentoOutputPort;
@@ -46,7 +47,7 @@ public class OrcamentoService implements OrcamentoInputPort {
                 .servicoOrcado("Orçamento")
                 .descricaoProblema(request.getDescricaoServico())
                 .dataEntrada(LocalDateTime.now())
-                .status("ABERTO")
+                .status(ServicoStatus.NAO_INICIADO)
                 .build();
 
         Servico servicoSalvo = servicoOutputPort.save(servico);
