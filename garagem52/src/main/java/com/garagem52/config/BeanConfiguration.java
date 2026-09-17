@@ -21,8 +21,16 @@ public class BeanConfiguration {
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
             LoginTokenOutputPort loginTokenOutputPort,
-            JavaMailSender mailSender) {
-        return new UserService(userOutputPort, passwordEncoder, jwtService, loginTokenOutputPort, mailSender);
+            JavaMailSender mailSender,
+            RateLimiterService rateLimiterService) {
+
+        return new UserService(
+                userOutputPort,
+                passwordEncoder,
+                jwtService,
+                loginTokenOutputPort,
+                mailSender,
+                rateLimiterService);
     }
 
     @Bean
@@ -46,8 +54,9 @@ public class BeanConfiguration {
             UserOutputPort userOutputPort,
             PasswordResetTokenOutputPort passwordResetTokenOutputPort,
             JavaMailSender mailSender,
-            PasswordEncoder passwordEncoder) {
-        return new PasswordResetService(userOutputPort, passwordResetTokenOutputPort, mailSender, passwordEncoder);
+            PasswordEncoder passwordEncoder,
+            RateLimiterService rateLimiterService) {
+        return new PasswordResetService(userOutputPort, passwordResetTokenOutputPort, mailSender, passwordEncoder, rateLimiterService);
     }
 
     @Bean

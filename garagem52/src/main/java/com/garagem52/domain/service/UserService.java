@@ -14,6 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.garagem52.domain.exception.user.TooManyRequestsException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +29,7 @@ public class UserService implements UserInputPort {
     private final JwtService jwtService;
     private final LoginTokenOutputPort loginTokenOutputPort;
     private final JavaMailSender mailSender;
+    private final RateLimiterService rateLimiterService;
 
     @Override
     public UserResponseDTO cadastro(CreateUserRequestDTO request) {
@@ -51,6 +53,15 @@ public class UserService implements UserInputPort {
 
     @Override
     public MessageResponse login(LoginRequestDTO request) {
+
+        String chave = "login:" + request.getEmail().toLowerCase();
+
+        if (!rateLimiterService.podeTentar(chave)) {
+            throw new TooManyRequestsException(
+                    "Muitas tentativas de login. Tente novamente em 15 minutos."
+            );
+        }
+
         User user = userOutputPort.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(request.getEmail()));
 
