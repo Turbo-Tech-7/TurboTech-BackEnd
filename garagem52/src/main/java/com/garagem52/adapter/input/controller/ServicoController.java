@@ -6,6 +6,8 @@ import com.garagem52.adapter.input.dto.response.ServicoResponseDTO;
 import com.garagem52.ports.input.ServicoInputPort;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,8 @@ public class ServicoController implements ServicoControllerSwagger {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<ServicoResponseDTO>> findAll() {
-        return ResponseEntity.ok(servicoInputPort.findAll());
+    public ResponseEntity<Page<ServicoResponseDTO>> findAll(Pageable page) {
+        return ResponseEntity.ok(servicoInputPort.findAll(page));
     }
 
     @Override
