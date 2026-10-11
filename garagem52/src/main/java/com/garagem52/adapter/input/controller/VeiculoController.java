@@ -6,11 +6,13 @@ import com.garagem52.adapter.input.dto.response.VeiculoResponseDTO;
 import com.garagem52.ports.input.VeiculoInputPort;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/veiculos")
@@ -39,8 +41,8 @@ public class VeiculoController implements VeiculoControllerSwagger {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<VeiculoResponseDTO>> findAll() {
-        return ResponseEntity.ok(veiculoInputPort.findAll());
+    public ResponseEntity<Page<VeiculoResponseDTO>> findAll(@PageableDefault(page = 0, size = 10) Pageable page) {
+        return ResponseEntity.ok(veiculoInputPort.findAll(page));
     }
 
     @Override

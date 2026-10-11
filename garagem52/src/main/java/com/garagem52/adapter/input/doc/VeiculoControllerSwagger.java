@@ -10,12 +10,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 
 @Tag(name = "Veículos", description = "Consulta e gerenciamento de veículos via placa (integração API externa)")
 @SecurityRequirement(name = "bearerAuth")
@@ -43,7 +44,7 @@ public interface VeiculoControllerSwagger {
     ResponseEntity<VeiculoResponseDTO> findByPlaca(@RequestParam String placa);
 
     @Operation(summary = "Listar todos os veículos")
-    ResponseEntity<List<VeiculoResponseDTO>> findAll();
+    ResponseEntity<Page<VeiculoResponseDTO>> findAll(Pageable page);
 
     @Operation(summary = "Atualizar dados do veículo (marca, modelo, cor)")
     ResponseEntity<VeiculoResponseDTO> update(@PathVariable String id, @Valid @RequestBody UpdateVeiculoRequestDTO requestDTO);

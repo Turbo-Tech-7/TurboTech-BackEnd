@@ -5,6 +5,8 @@ import com.garagem52.adapter.output.persistence.repository.MongoVeiculoRepositor
 import com.garagem52.domain.model.Veiculo;
 import com.garagem52.ports.output.VeiculoOutputPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,8 +31,8 @@ public class VeiculoRepositoryAdapter implements VeiculoOutputPort {
     }
 
     @Override
-    public List<Veiculo> findAll() {
-        return repository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
+    public Page<Veiculo> findAll(Pageable page) {
+        return repository.findAll(page).map(mapper::toDomain);
     }
 
     @Override

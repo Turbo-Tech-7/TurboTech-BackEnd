@@ -17,6 +17,8 @@ import com.garagem52.ports.output.ServicoOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,8 +54,8 @@ public class ServicoService implements ServicoInputPort {
     }
 
     @Override
-    public List<ServicoResponseDTO> findAll() {
-        return servicoOutputPort.findAll().stream().map(mapper::toResponseDTO).collect(Collectors.toList());
+    public Page<ServicoResponseDTO> findAll(Pageable page) {
+        return servicoOutputPort.findAll(page).map(mapper::toResponseDTO);
     }
 
     @Override

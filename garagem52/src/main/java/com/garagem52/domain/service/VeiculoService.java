@@ -9,11 +9,11 @@ import com.garagem52.ports.input.VeiculoInputPort;
 import com.garagem52.ports.output.VeiculoOutputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class VeiculoService implements VeiculoInputPort {
@@ -50,8 +50,8 @@ public class VeiculoService implements VeiculoInputPort {
     }
 
     @Override
-    public List<VeiculoResponseDTO> findAll() {
-        return veiculoOutputPort.findAll().stream().map(mapper::toResponseDTO).collect(Collectors.toList());
+    public Page<VeiculoResponseDTO> findAll(Pageable page) {
+        return veiculoOutputPort.findAll(page).map(mapper::toResponseDTO);
     }
 
     @Override
