@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +43,7 @@ public interface OrcamentoControllerSwagger {
     ResponseEntity<OrcamentoResponseDTO> findById(@PathVariable String id);
 
     @Operation(summary = "Listar todos os orçamentos")
-    ResponseEntity<List<OrcamentoResponseDTO>> findAll();
+    ResponseEntity<Page<OrcamentoResponseDTO>> findAll(Pageable page);
 
     @Operation(summary = "Buscar por veículo")
     ResponseEntity<List<OrcamentoResponseDTO>> findByVeiculoId(@RequestParam String veiculoId);

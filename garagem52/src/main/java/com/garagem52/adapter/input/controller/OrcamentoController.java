@@ -6,6 +6,9 @@ import com.garagem52.adapter.input.dto.response.OrcamentoResponseDTO;
 import com.garagem52.ports.input.OrcamentoInputPort;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +36,8 @@ public class OrcamentoController implements OrcamentoControllerSwagger {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<OrcamentoResponseDTO>> findAll() {
-        return ResponseEntity.ok(orcamentoInputPort.findAll());
+    public ResponseEntity<Page<OrcamentoResponseDTO>> findAll(@PageableDefault(page = 0, size = 10) Pageable page) {
+        return ResponseEntity.ok(orcamentoInputPort.findAll(page));
     }
 
     @Override

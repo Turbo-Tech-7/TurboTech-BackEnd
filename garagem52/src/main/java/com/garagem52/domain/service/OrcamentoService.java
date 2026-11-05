@@ -15,6 +15,8 @@ import com.garagem52.ports.output.ClienteVeiculoOutputPort;
 import com.garagem52.ports.output.OrcamentoOutputPort;
 import com.garagem52.ports.output.ServicoOutputPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -83,9 +85,8 @@ public class OrcamentoService implements OrcamentoInputPort {
     }
 
     @Override
-    public List<OrcamentoResponseDTO> findAll() {
-        return orcamentoOutputPort.findAll().stream()
-                .map(mapper::toResponseDTO).collect(Collectors.toList());
+    public Page<OrcamentoResponseDTO> findAll(Pageable page) {
+        return orcamentoOutputPort.findAll(page).map(mapper::toResponseDTO);
     }
 
     @Override

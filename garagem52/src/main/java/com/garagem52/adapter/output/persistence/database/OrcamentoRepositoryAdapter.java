@@ -10,6 +10,8 @@ import com.garagem52.domain.model.Veiculo;
 import com.garagem52.domain.utils.enums.OrcamentoStatus;
 import com.garagem52.ports.output.OrcamentoOutputPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,9 +39,8 @@ public class OrcamentoRepositoryAdapter implements OrcamentoOutputPort {
     }
 
     @Override
-    public List<Orcamento> findAll() {
-        return repository.findAll().stream()
-                .map(e -> enrich(mapper.toDomain(e))).collect(Collectors.toList());
+    public Page<Orcamento> findAll(Pageable page) {
+        return repository.findAll(page).map(e -> enrich(mapper.toDomain(e)));
     }
 
     @Override
