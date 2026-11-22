@@ -2,9 +2,6 @@ package com.garagem52.domain.service;
 
 import com.garagem52.adapter.input.dto.request.CreateServicoRequestDTO;
 import com.garagem52.adapter.input.dto.response.ServicoResponseDTO;
-import com.garagem52.adapter.output.client.MensageriaClient;
-import com.garagem52.adapter.output.client.dto.PublicarEventoRequestDTO;
-import com.garagem52.adapter.output.client.dto.StatusServicoEventPayloadDTO;
 import com.garagem52.adapter.output.persistence.mapper.ServicoMapper;
 import com.garagem52.domain.exception.servico.ServicoNotFoundException;
 import com.garagem52.domain.exception.servico.StatusServicoInvalidoException;
@@ -14,6 +11,7 @@ import com.garagem52.domain.utils.enums.ServicoStatus;
 import com.garagem52.ports.input.ServicoInputPort;
 import com.garagem52.ports.output.OrcamentoOutputPort;
 import com.garagem52.ports.output.ServicoOutputPort;
+import com.garagem52.ports.output.ServicoStatusEventPublisherPort;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +31,7 @@ public class ServicoService implements ServicoInputPort {
     private final ServicoOutputPort servicoOutputPort;
     private final OrcamentoOutputPort orcamentoOutputPort;
     private final ServicoMapper mapper;
-    private final MensageriaClient mensageriaClient;
+    private final ServicoStatusEventPublisherPort statusEventPublisher;
 
     @Override
     public ServicoResponseDTO criar(CreateServicoRequestDTO request) {
@@ -71,7 +69,7 @@ public class ServicoService implements ServicoInputPort {
         servico.setStatus(novoStatus);
         Servico salvo = servicoOutputPort.save(servico);
 
-        notificarMudancaStatus(salvo, novoStatus);
+        notificarMudancaStatus(salvo);
 
         return mapper.toResponseDTO(salvo);
     }
@@ -90,7 +88,7 @@ public class ServicoService implements ServicoInputPort {
         }
     }
 
-    private void notificarMudancaStatus(Servico servico, ServicoStatus status) {
+    private void notificarMudancaStatus(Servico servico) {
         Optional<Orcamento> orcamentoOpt = orcamentoOutputPort.findByServicoId(servico.getId()).stream().findFirst();
 
         if (orcamentoOpt.isEmpty()) {
@@ -104,26 +102,11 @@ public class ServicoService implements ServicoInputPort {
             return;
         }
 
-        StatusServicoEventPayloadDTO payload = StatusServicoEventPayloadDTO.builder()
-                .servicoId(servico.getId())
-                .orcamentoId(orcamento.getId())
-                .nomeCliente(orcamento.getNomeCliente())
-                .emailCliente(orcamento.getEmailCliente())
-                .veiculo(montarDescricaoVeiculo(orcamento))
-                .status(status.name())
-                .build();
-
+        // Falha na publicação NUNCA pode derrubar a atualização de status (já salva no banco).
         try {
-            mensageriaClient.publicar(new PublicarEventoRequestDTO("SERVICO_STATUS_ATUALIZADO", payload));
+            statusEventPublisher.publicarStatusAtualizado(servico, orcamento);
         } catch (Exception e) {
             log.error("Falha ao publicar evento de mudança de status do serviço {}", servico.getId(), e);
         }
-    }
-
-    private String montarDescricaoVeiculo(Orcamento orcamento) {
-        if (orcamento.getVeiculo() == null) {
-            return "";
-        }
-        return orcamento.getVeiculo().getModelo() + " - " + orcamento.getVeiculo().getPlaca();
     }
 }

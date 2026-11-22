@@ -13,6 +13,8 @@ import java.time.Duration;
 @EnableCaching
 public class CacheConfig {
 
+    public static final String SERVICOS = "servicos";
+
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
@@ -22,6 +24,7 @@ public class CacheConfig {
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(config)
+                .withCacheConfiguration(SERVICOS, config.entryTtl(Duration.ofMinutes(15)))
                 .build();
     }
 

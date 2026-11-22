@@ -204,14 +204,14 @@ public class DashboardRepositoryAdapter implements DashboardOutputPort {
     @Override
     public long countTotalOrcamentos(LocalDateTime from, LocalDateTime to) {
         return mongo.count(
-                new org.springframework.data.mongodb.core.query.Query(dataCriteria(from, to)),
+                new Query(dataCriteria(from, to)),
                 Document.class, "orcamento");
     }
 
     @Override
     public long countOrcamentosByStatus(String status, LocalDateTime from, LocalDateTime to) {
         return mongo.count(
-                new org.springframework.data.mongodb.core.query.Query(
+                new Query(
                         dataCriteria(from, to).and("status").is(status)),
                 Document.class, "orcamento");
     }

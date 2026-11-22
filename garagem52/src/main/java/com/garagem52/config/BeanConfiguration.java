@@ -1,6 +1,5 @@
 package com.garagem52.config;
 
-import com.garagem52.adapter.output.client.MensageriaClient;
 import com.garagem52.adapter.output.persistence.mapper.*;
 import com.garagem52.domain.service.*;
 import com.garagem52.ports.input.OrcamentoInputPort;
@@ -74,8 +73,8 @@ public class BeanConfiguration {
             ServicoOutputPort servicoOutputPort,
             OrcamentoOutputPort orcamentoOutputPort,
             ServicoMapper mapper,
-            MensageriaClient mensageriaClient) {
-        return new ServicoService(servicoOutputPort, orcamentoOutputPort, mapper, mensageriaClient);
+            ServicoStatusEventPublisherPort statusEventPublisher) {
+        return new ServicoService(servicoOutputPort, orcamentoOutputPort, mapper, statusEventPublisher);
     }
 
     @Bean

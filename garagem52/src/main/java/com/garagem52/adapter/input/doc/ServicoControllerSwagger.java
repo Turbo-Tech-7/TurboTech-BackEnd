@@ -41,7 +41,7 @@ public interface ServicoControllerSwagger {
     @Operation(summary = "Buscar serviços por veículo")
     ResponseEntity<List<ServicoResponseDTO>> findByVeiculoId(@RequestParam String veiculoId);
 
-    @Operation(summary = "Atualizar status do serviço (ex: ABERTO, EM_ANDAMENTO, CONCLUIDO)")
+    @Operation(summary = "Atualizar status do serviço (NAO_INICIADO, EM_ANDAMENTO, SERVICO_CONCLUIDO ou ENTREGUE)")
     ResponseEntity<ServicoResponseDTO> updateStatus(@PathVariable String id, @RequestParam String status);
 
     @Operation(summary = "Deletar serviço")
